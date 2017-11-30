@@ -836,8 +836,7 @@ public class gameController : MonoBehaviour {
 		Time.timeScale = 1f;
 
 		dadosJogo.Instance.salvar_dados();
-		//Application.LoadLevel("inicio");
-		SceneManager.LoadScene("inicio");
+		SceneManager.LoadScene("TelaInicialOpcoes");
 	}
 
 

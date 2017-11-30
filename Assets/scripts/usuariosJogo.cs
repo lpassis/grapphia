@@ -180,13 +180,10 @@ public class usuariosJogo : MonoBehaviour {
                 };
 
             }
-            
-<<<<<<< HEAD
+
             SceneManager.LoadScene ("TelaEstante");
-=======
             //Application.LoadLevel("estante_livros");
 			SceneManager.LoadScene ("estante_livros");
->>>>>>> parent of e1cb6e5... Atualização da scene "ditado"
 
         }
 
