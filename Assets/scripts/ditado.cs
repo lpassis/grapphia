@@ -6,13 +6,15 @@ using UnityEngine.SceneManagement;
 // Classe que controla todos os elementos gráficos do jogo!
 public class ditado : MonoBehaviour {
 
-	public GameObject mensagem_fim_jogo;
+	//public GameObject mensagem_fim_jogo;
 
-	public GameObject mensagem_audio_frase;
+	//public GameObject mensagem_audio_frase;
 
-	public InputField palavra; // Campo onde o usuário insere a palavra
+	//public InputField palavra; // Campo onde o usuário insere a palavra
 
-	public Text Score; // Referenciando acertos que mostra na tela! Verificar se necessário
+	//public Text Score; // Referenciando acertos que mostra na tela! Verificar se necessário
+
+	public GameObject animacaoProfessora;//para animação de professora
 
 	private int idPalavra; // Utilizado para identificar qual é a palavra corrente. Busca feita no vetor de palavras apresentadas ao usuário
 
@@ -34,11 +36,11 @@ public class ditado : MonoBehaviour {
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Inicializa a tela do jogo!
-	void Start () {
+	/*void Start () {
 
 		ScoreInitial = dadosJogo.Instance.currentUser.Score; // Recebendo do banco de dados o score do usuário corrente!
 
-		Score.text = "ACERTOS: " + dadosJogo.Instance.currentUser.Score;
+	//	Score.text = "ACERTOS: " + dadosJogo.Instance.currentUser.Score;
 
 		//bancoPalavras.Instance.carrega_palavras_nivel(dadosJogo.Instance.currentUser.Nivel);
 
@@ -47,7 +49,7 @@ public class ditado : MonoBehaviour {
 
 		idPalavra = Random.Range(0, bancoPalavras.Instance.qtd_WordsPresented); // Random para colocar palavra inicial aleatória
 		Debug.Log("idPalavra" + idPalavra);
-		indicePalavra = getPalavra(dadosJogo.Instance.currentUser.Nivel, idPalavra); //busca a palavra no banco de palavras
+//		indicePalavra = getPalavra(dadosJogo.Instance.currentUser.Nivel, idPalavra); //busca a palavra no banco de palavras
 		Debug.Log("indicePalavra" + indicePalavra);
 		Debug.Log("idPalavra" + idPalavra + " e palavra " + bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][indicePalavra].palavra_completa);
 
@@ -124,7 +126,7 @@ public class ditado : MonoBehaviour {
 				txtBoardLetter2.text = bancoPalavras.Instance.palavras[nivel][idPalavra].letra_correta;
 				txtBoardLetter.text = bancoPalavras.Instance.palavras[nivel][idPalavra].opcao1;
 
-			}*/
+			}
 		}
 		else {
 
@@ -133,15 +135,15 @@ public class ditado : MonoBehaviour {
 		}
 		--countWords;
 		Debug.Log ("1) countWords: " + countWords);
-	}
+	}*/
 
 
 
 	// ----------------------------------------------------------------------------------------------- funções que implementam eventos de botões da interface 
 	// Quando pressiona a caixa 1!
-	public void pressedButtonLetter1()
+	/*public void pressedButtonLetter1()
 	{
-		mensagem_audio_frase.SetActive(false);
+		//mensagem_audio_frase.SetActive(false);
 
 		int auxIdpalavra = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].Id - 1;
 
@@ -210,12 +212,13 @@ public class ditado : MonoBehaviour {
 
 			++dadosJogo.Instance.erros[dadosJogo.Instance.currentUser.Nivel];
 
-		}*/
-	}
+		}
+	}*/
 
-	public void pressedAudioFrase()
+	IEnumerator pressedAudioFrase()
 	{
-		string arquivo = "audios/" + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].nome_audio_ditado;
+		animacaoProfessora.SetActive (true);
+		string arquivo = "audios/aviseditado";
 
 			AudioClip clip = (AudioClip)Resources.Load (arquivo);
 			AudioSource audio;
@@ -224,6 +227,7 @@ public class ditado : MonoBehaviour {
 			audio.clip = clip;
 			audio.Play ();
 			Debug.Log (arquivo);
+
 	}
 
 }

@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/scenes/telaFimJogo.unity
+- path: Assets/scenes/telaDitado.unity
   isLoaded: 1
   isActive: 1
