@@ -16,6 +16,8 @@ public class ditado : MonoBehaviour {
 
 	public GameObject animacaoProfessora;//para animação de professora
 
+	public AudioClip clip;
+
 	private int idPalavra; // Utilizado para identificar qual é a palavra corrente. Busca feita no vetor de palavras apresentadas ao usuário
 
 	private int indicePalavra; //// Utilizado para identificar qual o índice no vetor da palavra corrente. Busca feita no vetor de palavras geral
@@ -215,19 +217,23 @@ public class ditado : MonoBehaviour {
 		}
 	}*/
 
-	IEnumerator pressedAudioFrase()
-	{
+	void pressedAudioFrase(){
+
+		string arquivo = "audiosditado/avisaditado";
 		animacaoProfessora.SetActive (true);
-		string arquivo = "audios/aviseditado";
+		clip = (AudioClip)Resources.Load (arquivo);
+		AudioSource audio;
+		audio = gameObject.AddComponent<AudioSource> ();
+		audio.volume = 1;
+		audio.clip = clip;
+		audio.Play ();
+		StartCoroutine ("audioEnd");
+	}
 
-			AudioClip clip = (AudioClip)Resources.Load (arquivo);
-			AudioSource audio;
-			audio = gameObject.AddComponent<AudioSource> ();
-			audio.volume = 1;
-			audio.clip = clip;
-			audio.Play ();
-			Debug.Log (arquivo);
-
+	//para quandot terminar áudio, chama recursivo em pressedAudioFrase()
+	IEnumerator audioEnd(){
+		yield return new WaitForSeconds (clip.length);
+		animacaoProfessora.SetActive (false);
 	}
 
 }
