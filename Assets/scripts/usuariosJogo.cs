@@ -182,7 +182,6 @@ public class usuariosJogo : MonoBehaviour {
             }
 
             SceneManager.LoadScene ("TelaEstante");
-            //Application.LoadLevel("estante_livros");
 
         }
 
