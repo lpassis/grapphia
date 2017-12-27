@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 // Classe que controla todos os elementos gráficos do jogo!
 public class gameController : MonoBehaviour {
@@ -611,7 +612,6 @@ public class gameController : MonoBehaviour {
 			sound_won.GetComponent<AudioSource>().Play();
 			txtBoardWord.text = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].palavra_completa;
 			Score.text = "ACERTOS: " + dadosJogo.Instance.currentUser.Score; 
-
 		}
 		else if (yboard_letter >= -1.7f)
 		{
@@ -652,6 +652,20 @@ public class gameController : MonoBehaviour {
 
 		}
 	}
+
+	public void salvaDadosJogado(){
+		int idUsuario = dadosJogo.Instance.currentUser.Id;
+		string nomeUsuario = dadosJogo.Instance.currentUser.Name;
+		int pontuacaoUsuario = dadosJogo.Instance.currentUser.Score;
+
+		StreamWriter sw = new StreamWriter(Application.dataPath + "/Pontuacao/" + nomeUsuario + " - Pontuacao.txt"); 
+		sw.WriteLine("Índice do Usuário:" +  idUsuario);
+		sw.WriteLine("Nome do Usuário:" +  nomeUsuario);
+		sw.WriteLine("Pontuação do Usuário:" +  pontuacaoUsuario);
+
+		sw.Close(); // fecha o arquivo, para o SO poder usá-lo para outras coisas
+	}
+
 	// Quando pressiona a caixa 2!
 	public void pressedButtonLetter2()
 	{

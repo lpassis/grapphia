@@ -30,6 +30,8 @@ public class bancoPalavras
 
 	public int maxLevel = 1; //quantidade de níveis (mundos) implementados
 
+
+
     // Construtor da classe!
     private bancoPalavras()
     {
@@ -60,7 +62,7 @@ public class bancoPalavras
 	 * level: indica o nível das palavras que será feita a busca no BD
 	 * As palavras retornadas do BD serão armazenadas no vetor palavras[][]
 	 */
-    public void carrega_palavras_nivel(int level) {
+	public void carrega_palavras_nivel(int level) {
 
 
         int aux = (level + 1);
@@ -140,7 +142,6 @@ public class bancoPalavras
         }
 
     }
-
 
     public void salvar_palavrasAcertoUser()
     {
