@@ -653,6 +653,11 @@ public class gameController : MonoBehaviour {
 		}
 	}
 
+	//Função criada por Magno
+	/*Essa função permite o salvamento de dados de usuário como id, nome e total de acertos, além de salvar os dados jogados no BD
+	da mesma forma que quando o usuário clica no botão de voltar ao menu inicial no pause
+	Observação: o arquivo será escrito nomeUsuario + "Pontuacao.txt" caso esteja jogado com um usuário que já foi utilizado reescreve 
+	o arquivo, caso seja um novo escreve um novo txt*/
 	public void salvaDadosJogado(){
 		int idUsuario = dadosJogo.Instance.currentUser.Id;
 		string nomeUsuario = dadosJogo.Instance.currentUser.Name;
@@ -663,7 +668,8 @@ public class gameController : MonoBehaviour {
 		sw.WriteLine("Nome do Usuário:" +  nomeUsuario);
 		sw.WriteLine("Pontuação do Usuário:" +  pontuacaoUsuario);
 
-		sw.Close(); // fecha o arquivo, para o SO poder usá-lo para outras coisas
+		sw.Close(); 
+		dadosJogo.Instance.salvar_dados();//salvar dados no BD
 	}
 
 	// Quando pressiona a caixa 2!
