@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Net;
+using System.Net.Mail;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 // Classe que controla todos os elementos gráficos do jogo!
 public class gameController : MonoBehaviour {
@@ -123,7 +127,6 @@ public class gameController : MonoBehaviour {
 	bool contadorAudio;
 	float aux;
 	int cont;
-
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -658,7 +661,7 @@ public class gameController : MonoBehaviour {
 	da mesma forma que quando o usuário clica no botão de voltar ao menu inicial no pause
 	Observação: o arquivo será escrito nomeUsuario + "Pontuacao.txt" caso esteja jogado com um usuário que já foi utilizado reescreve 
 	o arquivo, caso seja um novo escreve um novo txt*/
-	public void salvaDadosJogado(){
+	public void SalvaDadosJogado(){
 		int idUsuario = dadosJogo.Instance.currentUser.Id;
 		string nomeUsuario = dadosJogo.Instance.currentUser.Name;
 		int pontuacaoUsuario = dadosJogo.Instance.currentUser.Score;
@@ -667,10 +670,9 @@ public class gameController : MonoBehaviour {
 		sw.WriteLine("Índice do Usuário:" +  idUsuario);
 		sw.WriteLine("Nome do Usuário:" +  nomeUsuario);
 		sw.WriteLine("Pontuação do Usuário:" +  pontuacaoUsuario);
-
 		sw.Close(); 
 		dadosJogo.Instance.salvar_dados();//salvar dados no BD
-	}
+	}		
 
 	// Quando pressiona a caixa 2!
 	public void pressedButtonLetter2()
