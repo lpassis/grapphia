@@ -24,7 +24,7 @@ public class bancoPalavras
 
     public DataService dataservice;
 
-    public int acertos;
+    public int acertos, erros;//armazena acertos e erros totais por usuário
 
     public int total_palavras; //total de palavras no BD em todos os níveis
 

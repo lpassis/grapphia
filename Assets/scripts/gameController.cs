@@ -126,7 +126,6 @@ public class gameController : MonoBehaviour {
 	bool fimJogo;
 	bool contadorAudio;
 	float aux;
-	int cont;
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -664,15 +663,41 @@ public class gameController : MonoBehaviour {
 	public void SalvaDadosJogado(){
 		int idUsuario = dadosJogo.Instance.currentUser.Id;
 		string nomeUsuario = dadosJogo.Instance.currentUser.Name;
-		int pontuacaoUsuario = dadosJogo.Instance.currentUser.Score;
+		int pontuacaoUsuarioAcerto = dadosJogo.Instance.currentUser.Score;
 
 		StreamWriter sw = new StreamWriter(Application.dataPath + "/Pontuacao/" + nomeUsuario + " - Pontuacao.txt"); 
-		sw.WriteLine("Índice do Usuário:" +  idUsuario);
-		sw.WriteLine("Nome do Usuário:" +  nomeUsuario);
-		sw.WriteLine("Pontuação do Usuário:" +  pontuacaoUsuario);
+		sw.WriteLine("Índice do Usuário: " +  idUsuario);
+		sw.WriteLine("Nome do Usuário: " +  nomeUsuario);
+		sw.WriteLine("Acertos do Usuário: " +  pontuacaoUsuarioAcerto);
 		sw.Close(); 
 		dadosJogo.Instance.salvar_dados();//salvar dados no BD
-	}		
+
+		//Enviar e-mail ao terminar de salvar txt e dados no BD
+		StartCoroutine("EnviarEmail");
+	}	
+
+	//Função criada por Magno
+	/*Função para envio automatico de e-mail ao clicar em salvar dados do jogo, o e-mail será enviado para projetograpphia@gmail.com*/
+	public void EnviarEmail(){
+		string nomeUsuario = dadosJogo.Instance.currentUser.Name;
+
+		MailMessage mail = new MailMessage();
+
+		mail.From = new MailAddress("projetograpphia@gmail.com");
+		mail.To.Add( "projetograpphia@gmail.com");
+		mail.Subject = "Pontuação do usuário: " + nomeUsuario;
+		mail.Body = "Estes são os dados de jogo do(a): "+ nomeUsuario ;
+		mail.Attachments.Add (new Attachment (Application.dataPath + "/Pontuacao/" + nomeUsuario + " - Pontuacao.txt"));//anexo
+
+		SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
+		smtpServer.Port = 587;
+		smtpServer.Credentials = (ICredentialsByHost) new System.Net.NetworkCredential("projetograpphia@gmail.com", "grapphia2017");
+		smtpServer.EnableSsl = true;
+		ServicePointManager.ServerCertificateValidationCallback = 
+			delegate(object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) 
+		{ return true; };
+		smtpServer.Send(mail);
+	}
 
 	// Quando pressiona a caixa 2!
 	public void pressedButtonLetter2()
