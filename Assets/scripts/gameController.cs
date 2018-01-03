@@ -123,6 +123,10 @@ public class gameController : MonoBehaviour {
 
 	int ScoreInitial; // Armazena o acerto inicial em cada nível!
 
+	//Para controle do botão de salvar os dados
+	public GameObject saveStart;
+	public GameObject saveEnd;
+
 	bool fimJogo;
 	bool contadorAudio;
 	float aux;
@@ -661,6 +665,7 @@ public class gameController : MonoBehaviour {
 	Observação: o arquivo será escrito nomeUsuario + "Pontuacao.txt" caso esteja jogado com um usuário que já foi utilizado reescreve 
 	o arquivo, caso seja um novo escreve um novo txt*/
 	public void SalvaDadosJogado(){
+		
 		int idUsuario = dadosJogo.Instance.currentUser.Id;
 		string nomeUsuario = dadosJogo.Instance.currentUser.Name;
 		int pontuacaoUsuarioAcerto = dadosJogo.Instance.currentUser.Score;
@@ -675,6 +680,7 @@ public class gameController : MonoBehaviour {
 		//Enviar e-mail ao terminar de salvar txt e dados no BD
 		StartCoroutine("EnviarEmail");
 	}	
+
 
 	//Função criada por Magno
 	/*Função para envio automatico de e-mail ao clicar em salvar dados do jogo, o e-mail será enviado para projetograpphia@gmail.com*/

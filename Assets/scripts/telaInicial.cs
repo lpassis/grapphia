@@ -20,7 +20,7 @@ public class telaInicial : MonoBehaviour {
         // Função que bloqueia e ativa o som!
         var compaudio = somOn.GetComponent<AudioSource>();
 
-        if (compaudio.isPlaying)
+		if (compaudio.isPlaying) 
         {
             somOn.SetActive(false);
             somOn.GetComponent<AudioSource>().Pause();
