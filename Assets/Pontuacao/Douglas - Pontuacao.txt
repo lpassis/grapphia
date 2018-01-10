@@ -1,0 +1,3 @@
+Id do Usuário: 43
+Nome do Usuário: Douglas
+Acertos do Usuário: 1

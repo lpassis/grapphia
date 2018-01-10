@@ -1,0 +1,3 @@
+Id do Usuário: 44
+Nome do Usuário: Silvio
+Acertos do Usuário: 2

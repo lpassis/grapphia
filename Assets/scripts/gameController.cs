@@ -9,34 +9,44 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
 // Classe que controla todos os elementos gráficos do jogo!
-public class gameController : MonoBehaviour {
+public class gameController : MonoBehaviour
+{
 
-	public GameObject cloud1;    // Referenciando as nuvens!
+	public GameObject cloud1;
+	// Referenciando as nuvens!
 	public GameObject cloud2;
 	public GameObject cloud3;
 
-	public GameObject bird1;    // Referenciando os pássaros
+	public GameObject bird1;
+	// Referenciando os pássaros
 	public GameObject bird2;
 
-	public GameObject horse;     // Referenciando os cavalos!
+	public GameObject horse;
+	// Referenciando os cavalos!
 	public GameObject horse2;
 
-	public GameObject board_letter; // Referenciando as caixas!
+	public GameObject board_letter;
+	// Referenciando as caixas!
 	public GameObject board2_letter;
 
-	public GameObject message_hit;    // Referenciando as mensagens de acerto e erro!
+	public GameObject message_hit;
+	// Referenciando as mensagens de acerto e erro!
 	public GameObject message_error;
 
-	public GameObject cowgirl_moving_rope;  // Referenciando o cowboy e a cowgirl!
+	public GameObject cowgirl_moving_rope;
+	// Referenciando o cowboy e a cowgirl!
 	public GameObject cowboy_moving_rope;
 
-	public GameObject sound_won; // Rerefenciando sons de ganhou e perdeu!
+	public GameObject sound_won;
+	// Rerefenciando sons de ganhou e perdeu!
 	public GameObject sound_lost;
 
-	public GameObject sound_on;  // Referenciando botão som ativado e desativado!
+	public GameObject sound_on;
+	// Referenciando botão som ativado e desativado!
 	public GameObject sound_off;
 
-	public GameObject menu_pause; // Referenciando botão pause!
+	public GameObject menu_pause;
+	// Referenciando botão pause!
 
 	public GameObject mensagem_inicial;
 
@@ -52,13 +62,16 @@ public class gameController : MonoBehaviour {
 
 	public GameObject cowgirl_lacando2;
 
-	public Text txtBoardWord; // Rerenciando caixa da palavra, onde vai conter a palavra!
+	public Text txtBoardWord;
+	// Rerenciando caixa da palavra, onde vai conter a palavra!
 
-	public Text txtBoardLetter; // Referenciando caixas das letras, onde vai conter as letras a serem escolhidas!
+	public Text txtBoardLetter;
+	// Referenciando caixas das letras, onde vai conter as letras a serem escolhidas!
 
 	public Text txtBoardLetter2;
 
-	public Text Score; // Referenciando acertos que mostra na tela!
+	public Text Score;
+	// Referenciando acertos que mostra na tela!
 
 	public GameObject casa0;
 	public GameObject casa1;
@@ -113,15 +126,20 @@ public class gameController : MonoBehaviour {
 	private float yboard2_letter_initial;
 
 
-	private int idPalavra; // Utilizado para identificar qual é a palavra corrente!
+	private int idPalavra;
+	// Utilizado para identificar qual é a palavra corrente!
 
-	private bool respondido; // Verificar se usuário já respondeu!
+	private bool respondido;
+	// Verificar se usuário já respondeu!
 
-	private int countWords; // Faz o controle da contagem para não ficar repetindo a palavra!
+	private int countWords;
+	// Faz o controle da contagem para não ficar repetindo a palavra!
 
-	float randNum_blocos; // Randa para colocar os blocos com a letra em ordem aleatória!
+	float randNum_blocos;
+	// Randa para colocar os blocos com a letra em ordem aleatória!
 
-	int ScoreInitial; // Armazena o acerto inicial em cada nível!
+	int ScoreInitial;
+	// Armazena o acerto inicial em cada nível!
 
 	//Para controle do botão de salvar os dados
 	public GameObject saveStart;
@@ -134,28 +152,28 @@ public class gameController : MonoBehaviour {
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Inicializa a tela do jogo!
-	void Start () {
+	void Start ()
+	{
 
 		ScoreInitial = dadosJogo.Instance.currentUser.Score; // Recebendo do banco de dados o score do usuário corrente!
 
 		if (ScoreInitial == 0) {
 
-			mensagem_inicial.SetActive(true);
-			mensagem_audio_frase.SetActive(true);
+			mensagem_inicial.SetActive (true);
+			mensagem_audio_frase.SetActive (true);
 
-		}
-		else verifica_porcentagem_casa();
+		} else
+			verifica_porcentagem_casa ();
 
-		horse.GetComponent<AudioSource>().Pause();
-		horse2.GetComponent<AudioSource>().Pause();
+		horse.GetComponent<AudioSource> ().Pause ();
+		horse2.GetComponent<AudioSource> ().Pause ();
 		Score.text = "ACERTOS: " + dadosJogo.Instance.currentUser.Score;
 
 		// IF para saber qual personagem vai ativar!
-		if (dadosJogo.Instance.currentPesonagem == 1) 
-		{
-			cowboy_moving_rope.SetActive(false);
-		}
-		else cowgirl_moving_rope.SetActive(false);
+		if (dadosJogo.Instance.currentPesonagem == 1) {
+			cowboy_moving_rope.SetActive (false);
+		} else
+			cowgirl_moving_rope.SetActive (false);
 
 		// inicializando as posições dos objetos!
 		x1 = cloud1.transform.position.x;
@@ -186,64 +204,70 @@ public class gameController : MonoBehaviour {
 		yboard2_letter_initial = yboard2_letter = board2_letter.transform.position.y;
 
 
-		bancoPalavras.Instance.carrega_palavras_nivel(dadosJogo.Instance.currentUser.Nivel);
+		bancoPalavras.Instance.carrega_palavras_nivel (dadosJogo.Instance.currentUser.Nivel);
 
 		countWords = bancoPalavras.Instance.numWordsGame; //quantidade de palavras apresentadas ao usuário
 
-		idPalavra = Random.Range(0, bancoPalavras.Instance.qtd_Words); // Random para colocar palavra inicial aleatória
+		idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words); // Random para colocar palavra inicial aleatória
 
-		Debug.Log(idPalavra + " e palavra " + bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].palavra_completa);
+		Debug.Log (idPalavra + " e palavra " + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa);
 
-		randNum_blocos = Random.Range(1.0f, 2.0f); // Ordem aleatória de entrada dos blocos com as letras 
+		randNum_blocos = Random.Range (1.0f, 2.0f); // Ordem aleatória de entrada dos blocos com as letras 
 
-		this.setPalavra(dadosJogo.Instance.currentUser.Nivel);
+		this.setPalavra (dadosJogo.Instance.currentUser.Nivel);
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Vai ser chamada a cada frame por segundo!
-	void FixedUpdate () {
+	void FixedUpdate ()
+	{
 
 		// limite do movimento dos objetos!
 		//if (xboard_letter >= -2f) xboard_letter -= 0.065f;
-		if (xboard_letter >= -2f) xboard_letter -= 0.125f; // velocidade da caixa 1
-		else if (yboard_letter <= -1.7f)
-		{
+		if (xboard_letter >= -2f)
+			xboard_letter -= 0.125f; // velocidade da caixa 1
+		else if (yboard_letter <= -1.7f) {
 			yboard_letter += 0.090f;
 			yHorse -= 0.06f;
 
 		}
 
 		//if (xboard2_letter >= 0f) xboard2_letter -= 0.065f;
-		if (xboard2_letter >= 0f) xboard2_letter -= 0.125f; // velocidade da caixa 2
-		else if (yboard2_letter <= -1.7f)
-		{
+		if (xboard2_letter >= 0f)
+			xboard2_letter -= 0.125f; // velocidade da caixa 2
+		else if (yboard2_letter <= -1.7f) {
 			yboard2_letter += 0.090f;
 			yHorse2 -= 0.06f;
 
 		}
-		if (x1 >= 9.52f) x1 = -9.52f;
-		if (x2 >= 9.52f) x2 = -9.52f;
-		if (x3 >= 9.52f) x3 = -9.52f;
+		if (x1 >= 9.52f)
+			x1 = -9.52f;
+		if (x2 >= 9.52f)
+			x2 = -9.52f;
+		if (x3 >= 9.52f)
+			x3 = -9.52f;
 
-		if (xBird1 <= -9.52f) xBird1 = 16.52f;
-		if (xBird2 <= -9.52f) xBird2 = 23.52f;
-		if (xHorse <= -9.52f)
-		{ 
-			horse.GetComponent<AudioSource>().Pause();
+		if (xBird1 <= -9.52f)
+			xBird1 = 16.52f;
+		if (xBird2 <= -9.52f)
+			xBird2 = 23.52f;
+		if (xHorse <= -9.52f) { 
+			horse.GetComponent<AudioSource> ().Pause ();
 			xHorse = 30f;
 
 		}
 
-		if (xHorse < 9.52f && respondido == false) horse.GetComponent<AudioSource>().UnPause();
+		if (xHorse < 9.52f && respondido == false)
+			horse.GetComponent<AudioSource> ().UnPause ();
 
-		if (xHorse2 <= -9.52f)
-		{
-			horse2.GetComponent<AudioSource>().Pause();
+		if (xHorse2 <= -9.52f) {
+			horse2.GetComponent<AudioSource> ().Pause ();
 			xHorse2 = 30f;
 		}
 
-		if (xHorse2 < 9.52f && respondido == false) horse2.GetComponent<AudioSource>().UnPause();
+		if (xHorse2 < 9.52f && respondido == false)
+			horse2.GetComponent<AudioSource> ().UnPause ();
 
 		// Velocidade dos movimentos dos objetos!
 		x1 = x1 + 0.002f;
@@ -258,8 +282,7 @@ public class gameController : MonoBehaviour {
 
 
 		// IF para verificar se usuário escolheu a opção!
-		if (respondido)
-		{
+		if (respondido) {
 
 			xHorse = xHorseinitial;
 			yHorse = yHorseinitial;
@@ -267,17 +290,14 @@ public class gameController : MonoBehaviour {
 			yHorse2 = yHorse2initial;
 
 
-			if (aux <= 9.52f && xboard_letter < 9f)
-			{
+			if (aux <= 9.52f && xboard_letter < 9f) {
 				aux += 0.09f;
 				//yboard_letter += 0.09f;
 				//yboard2_letter += 0.09f;
 				//board_letter.transform.position = new Vector2(xboard_letter, yboard_letter);
 				//board2_letter.transform.position = new Vector2(xboard2_letter, yboard2_letter);
 
-			}
-			else
-			{
+			} else {
 
 				xboard_letter = xboard_letter_initial;
 				yboard_letter = yboard_letter_initial;
@@ -285,52 +305,48 @@ public class gameController : MonoBehaviour {
 				xboard2_letter = xboard2_letter_initial;
 				yboard2_letter = yboard2_letter_initial;
 				respondido = false;
-				message_hit.SetActive(false);
-				message_error.SetActive(false);
+				message_hit.SetActive (false);
+				message_error.SetActive (false);
 				//board_letter.SetActive(true);
 				//board2_letter.SetActive(true);
-				board_letter.GetComponent<Button>().enabled = true;
-				board2_letter.GetComponent<Button>().enabled = true;
+				board_letter.GetComponent<Button> ().enabled = true;
+				board2_letter.GetComponent<Button> ().enabled = true;
 
-				if (dadosJogo.Instance.currentPesonagem == 2)
-				{
-					cowboy_lacando1.SetActive(false);
-					cowboy_lacando2.SetActive(false);
-					cowboy_moving_rope.SetActive(true);
+				if (dadosJogo.Instance.currentPesonagem == 2) {
+					cowboy_lacando1.SetActive (false);
+					cowboy_lacando2.SetActive (false);
+					cowboy_moving_rope.SetActive (true);
 
-				}
-				else
-				{
-					cowgirl_lacando1.SetActive(false);
-					cowgirl_lacando2.SetActive(false);
-					cowgirl_moving_rope.SetActive(true);
+				} else {
+					cowgirl_lacando1.SetActive (false);
+					cowgirl_lacando2.SetActive (false);
+					cowgirl_moving_rope.SetActive (true);
 
 				}
 
-				idPalavra = Random.Range(0, bancoPalavras.Instance.qtd_Words);
-				randNum_blocos = Random.Range(1.0f, 2.0f);
+				idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words);
+				randNum_blocos = Random.Range (1.0f, 2.0f);
 
 				//if((dadosJogo.Instance.currentUser.Score - dadosJogo.Instance.erros[dadosJogo.Instance.currentUser.Nivel]) == ScoreInitial + 10)
 
-				if (countWords <= 0)
-				{
-						SceneManager.LoadScene("telaFimJogo");
-						Debug.Log ("3) countWords: " + countWords);
-						horse.SetActive(false);
-						horse2.SetActive(false);
-						board_letter.SetActive(false);
-						board2_letter.SetActive(false);
-						cowboy_moving_rope.SetActive(false);
-						cowgirl_moving_rope.SetActive(false);
-						fimJogo = true;
-						inteligencia.Instance.seleciona_nivel();  // SELECIONADO O NÍVEL
-						dadosJogo.Instance.salvar_dados();
-						return;
+				if (countWords <= 0) {
+					SceneManager.LoadScene ("telaFimJogo");
+					Debug.Log ("3) countWords: " + countWords);
+					horse.SetActive (false);
+					horse2.SetActive (false);
+					board_letter.SetActive (false);
+					board2_letter.SetActive (false);
+					cowboy_moving_rope.SetActive (false);
+					cowgirl_moving_rope.SetActive (false);
+					fimJogo = true;
+					inteligencia.Instance.seleciona_nivel ();  // SELECIONADO O NÍVEL
+					dadosJogo.Instance.salvar_dados ();
+					return;
 
-					}
+				}
 
 
-					/*inteligencia.Instance.seleciona_nivel();  // SELECIONADO O NÍVEL
+				/*inteligencia.Instance.seleciona_nivel();  // SELECIONADO O NÍVEL
 					dadosJogo.Instance.salvar_dados();
 					ScoreInitial = dadosJogo.Instance.currentUser.Score;
 					Debug.Log ("Entrei aqui");
@@ -341,21 +357,21 @@ public class gameController : MonoBehaviour {
 
 
 
-				this.setPalavra(dadosJogo.Instance.currentUser.Nivel);
+				this.setPalavra (dadosJogo.Instance.currentUser.Nivel);
 			}
 
 		}
 
 		//Setando nos objetos!
-		cloud1.transform.position = new Vector2(x1, y1);
-		cloud2.transform.position = new Vector2(x2, y2);
-		cloud3.transform.position = new Vector2(x3, y3);
-		bird1.transform.position = new Vector2(xBird1, yBird1);
-		bird2.transform.position = new Vector2(xBird2, yBird2);
-		horse.transform.position = new Vector2(xHorse,yHorse);
-		horse2.transform.position = new Vector2(xHorse2, yHorse2);
-		board_letter.transform.position = new Vector2(xboard_letter, yboard_letter);
-		board2_letter.transform.position = new Vector2(xboard2_letter, yboard2_letter);
+		cloud1.transform.position = new Vector2 (x1, y1);
+		cloud2.transform.position = new Vector2 (x2, y2);
+		cloud3.transform.position = new Vector2 (x3, y3);
+		bird1.transform.position = new Vector2 (xBird1, yBird1);
+		bird2.transform.position = new Vector2 (xBird2, yBird2);
+		horse.transform.position = new Vector2 (xHorse, yHorse);
+		horse2.transform.position = new Vector2 (xHorse2, yHorse2);
+		board_letter.transform.position = new Vector2 (xboard_letter, yboard_letter);
+		board2_letter.transform.position = new Vector2 (xboard2_letter, yboard2_letter);
 
 	}
 
@@ -363,7 +379,7 @@ public class gameController : MonoBehaviour {
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Função para mudar palavra na caixa!
-	public void setPalavra(int nivel)
+	public void setPalavra (int nivel)
 	{
 		int countLoop = 0;
 
@@ -371,192 +387,149 @@ public class gameController : MonoBehaviour {
 
 		++countLoop;
 
-		int aux = bancoPalavras.Instance.palavras[nivel][idPalavra].Id - 1;
+		int aux = bancoPalavras.Instance.palavras [nivel] [idPalavra].Id - 1;
 
-		if (bancoPalavras.Instance.palavrasAcerto[aux].acerto != true || 
-			countLoop > bancoPalavras.Instance.total_palavras)
-		{
+		if (bancoPalavras.Instance.palavrasAcerto [aux].acerto != true ||
+		    countLoop > bancoPalavras.Instance.total_palavras) {
 
-			txtBoardWord.text = bancoPalavras.Instance.palavras[nivel][idPalavra].palavra;
+			txtBoardWord.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].palavra;
 
-			if (randNum_blocos > 1.5f)
-			{
-				txtBoardLetter.text = bancoPalavras.Instance.palavras[nivel][idPalavra].letra_correta;
-				txtBoardLetter2.text = bancoPalavras.Instance.palavras[nivel][idPalavra].opcao1;
-			}
-			else
-			{
-				txtBoardLetter2.text = bancoPalavras.Instance.palavras[nivel][idPalavra].letra_correta;
-				txtBoardLetter.text = bancoPalavras.Instance.palavras[nivel][idPalavra].opcao1;
+			if (randNum_blocos > 1.5f) {
+				txtBoardLetter.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].letra_correta;
+				txtBoardLetter2.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].opcao1;
+			} else {
+				txtBoardLetter2.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].letra_correta;
+				txtBoardLetter.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].opcao1;
 
 			}
-		}
-		else {
+		} else {
 			
-			idPalavra = Random.Range(0, bancoPalavras.Instance.qtd_Words);
+			idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words);
 			goto setPalavra;
 		}
 		--countWords;
 		Debug.Log ("1) countWords: " + countWords);
 	}
 
-	public void calcula_porcentagem_casa()
+	public void calcula_porcentagem_casa ()
 	{
 
-		Debug.Log("Score" + dadosJogo.Instance.currentUser.Score);
-		Debug.Log("total_palavras" + bancoPalavras.Instance.total_palavras);
+		Debug.Log ("Score" + dadosJogo.Instance.currentUser.Score);
+		Debug.Log ("total_palavras" + bancoPalavras.Instance.total_palavras);
 		//double p = (double) dadosJogo.Instance.currentUser.Score / (bancoPalavras.Instance.total_palavras / 10);
 
 		double p = (double)dadosJogo.Instance.currentUser.Score;
-		Debug.Log("p" + p);
+		Debug.Log ("p" + p);
 
-		if (p == 2.0)
-		{
-			casa8.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
-		}
-		else if (p == 4.0)
-		{
-			casa9.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
-		}
-		else if (p == 6.0)
-		{
-			casa7.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
-		}
-		else if (p == 8.0)
-		{
-			casa6.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
-		}
-		else if (p == 10.0)
-		{
-			casa5.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
-		}
-		else if (p == 11.0)
-		{
-			casa4.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
-		}
-		else if (p == 12.0)
-		{
-			casa3.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
-		}
-		else if (p == 13.0)
-		{
-			casa2.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
-		}
-		else if (p == 14.0)
-		{
-			casa0.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
-		}
-		else if (p == 15.0)
-		{
-			casa1.SetActive(true);
-			casa8.GetComponent<AudioSource>().Play();
+		if (p == 2.0) {
+			casa8.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
+		} else if (p == 4.0) {
+			casa9.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
+		} else if (p == 6.0) {
+			casa7.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
+		} else if (p == 8.0) {
+			casa6.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
+		} else if (p == 10.0) {
+			casa5.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
+		} else if (p == 11.0) {
+			casa4.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
+		} else if (p == 12.0) {
+			casa3.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
+		} else if (p == 13.0) {
+			casa2.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
+		} else if (p == 14.0) {
+			casa0.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
+		} else if (p == 15.0) {
+			casa1.SetActive (true);
+			casa8.GetComponent<AudioSource> ().Play ();
 		}
 	}
 
 
-	public void verifica_porcentagem_casa()
+	public void verifica_porcentagem_casa ()
 	{
 
-		Debug.Log("Score" + dadosJogo.Instance.currentUser.Score);
-		Debug.Log("total_palavras" + bancoPalavras.Instance.total_palavras);
+		Debug.Log ("Score" + dadosJogo.Instance.currentUser.Score);
+		Debug.Log ("total_palavras" + bancoPalavras.Instance.total_palavras);
 		double p = dadosJogo.Instance.currentUser.Score / (bancoPalavras.Instance.total_palavras / 10);
-		Debug.Log("p" + p);
+		Debug.Log ("p" + p);
 
-		if (p >= 1.0 && p < 2.0)
-		{
-			casa8.SetActive(true);
-		}
-		else if (p >= 2.0 && p < 3.0)
-		{
+		if (p >= 1.0 && p < 2.0) {
+			casa8.SetActive (true);
+		} else if (p >= 2.0 && p < 3.0) {
 
-			casa8.SetActive(true);
-			casa9.SetActive(true);
-		}
-		else if (p >= 3.0 && p < 4.0)
-		{
+			casa8.SetActive (true);
+			casa9.SetActive (true);
+		} else if (p >= 3.0 && p < 4.0) {
 
-			casa8.SetActive(true);
-			casa9.SetActive(true);
-			casa7.SetActive(true);
-		}
-		else if (p >= 4.0 && p < 5.0)
-		{
-			casa8.SetActive(true);
-			casa9.SetActive(true);
-			casa7.SetActive(true);
-			casa6.SetActive(true);
-		}
-		else if (p >= 5.0 && p < 6.0)
-		{
-			casa8.SetActive(true);
-			casa9.SetActive(true);
-			casa7.SetActive(true);
-			casa6.SetActive(true);
-			casa5.SetActive(true);
-		}
-		else if (p >= 6.0 && p < 7.0)
-		{
-			casa8.SetActive(true);
-			casa9.SetActive(true);
-			casa7.SetActive(true);
-			casa6.SetActive(true);
-			casa5.SetActive(true);
-			casa4.SetActive(true);
-		}
-		else if (p >= 7.0 && p < 8.0)
-		{
-			casa8.SetActive(true);
-			casa9.SetActive(true);
-			casa7.SetActive(true);
-			casa6.SetActive(true);
-			casa5.SetActive(true);
-			casa4.SetActive(true);
-			casa3.SetActive(true);
-		}
-		else if (p >= 8.0 && p < 9.0)
-		{
-			casa8.SetActive(true);
-			casa9.SetActive(true);
-			casa7.SetActive(true);
-			casa6.SetActive(true);
-			casa5.SetActive(true);
-			casa4.SetActive(true);
-			casa3.SetActive(true);
-			casa2.SetActive(true);
-		}
-		else if (p >= 9.0 && p < 10.0)
-		{
-			casa8.SetActive(true);
-			casa9.SetActive(true);
-			casa7.SetActive(true);
-			casa6.SetActive(true);
-			casa5.SetActive(true);
-			casa4.SetActive(true);
-			casa3.SetActive(true);
-			casa2.SetActive(true);
-			casa0.SetActive(true);
-		}
-		else if (p == 10.0)
-		{
-			casa8.SetActive(true);
-			casa9.SetActive(true);
-			casa7.SetActive(true);
-			casa6.SetActive(true);
-			casa5.SetActive(true);
-			casa4.SetActive(true);
-			casa3.SetActive(true);
-			casa2.SetActive(true);
-			casa0.SetActive(true);
-			casa1.SetActive(true);
+			casa8.SetActive (true);
+			casa9.SetActive (true);
+			casa7.SetActive (true);
+		} else if (p >= 4.0 && p < 5.0) {
+			casa8.SetActive (true);
+			casa9.SetActive (true);
+			casa7.SetActive (true);
+			casa6.SetActive (true);
+		} else if (p >= 5.0 && p < 6.0) {
+			casa8.SetActive (true);
+			casa9.SetActive (true);
+			casa7.SetActive (true);
+			casa6.SetActive (true);
+			casa5.SetActive (true);
+		} else if (p >= 6.0 && p < 7.0) {
+			casa8.SetActive (true);
+			casa9.SetActive (true);
+			casa7.SetActive (true);
+			casa6.SetActive (true);
+			casa5.SetActive (true);
+			casa4.SetActive (true);
+		} else if (p >= 7.0 && p < 8.0) {
+			casa8.SetActive (true);
+			casa9.SetActive (true);
+			casa7.SetActive (true);
+			casa6.SetActive (true);
+			casa5.SetActive (true);
+			casa4.SetActive (true);
+			casa3.SetActive (true);
+		} else if (p >= 8.0 && p < 9.0) {
+			casa8.SetActive (true);
+			casa9.SetActive (true);
+			casa7.SetActive (true);
+			casa6.SetActive (true);
+			casa5.SetActive (true);
+			casa4.SetActive (true);
+			casa3.SetActive (true);
+			casa2.SetActive (true);
+		} else if (p >= 9.0 && p < 10.0) {
+			casa8.SetActive (true);
+			casa9.SetActive (true);
+			casa7.SetActive (true);
+			casa6.SetActive (true);
+			casa5.SetActive (true);
+			casa4.SetActive (true);
+			casa3.SetActive (true);
+			casa2.SetActive (true);
+			casa0.SetActive (true);
+		} else if (p == 10.0) {
+			casa8.SetActive (true);
+			casa9.SetActive (true);
+			casa7.SetActive (true);
+			casa6.SetActive (true);
+			casa5.SetActive (true);
+			casa4.SetActive (true);
+			casa3.SetActive (true);
+			casa2.SetActive (true);
+			casa0.SetActive (true);
+			casa1.SetActive (true);
 		}
 	}
 
@@ -565,233 +538,210 @@ public class gameController : MonoBehaviour {
 	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-	// ----------------------------------------------------------------------------------------------- funções que implementam eventos de botões da interface 
+	// ----------------------------------------------------------------------------------------------- funções que implementam eventos de botões da interface
 	// Quando pressiona a caixa 1!
-	public void pressedButtonLetter1()
+	public void pressedButtonLetter1 ()
 	{
-		horse.GetComponent<AudioSource>().Pause();
-		horse.GetComponent<AudioSource>().time = 0.0f;
-		horse2.GetComponent<AudioSource>().Pause();
-		horse2.GetComponent<AudioSource>().time = 0.0f;
-		mensagem_inicial.SetActive(false);
-		mensagem_audio_frase.SetActive(false);
+		horse.GetComponent<AudioSource> ().Pause ();
+		horse.GetComponent<AudioSource> ().time = 0.0f;
+		horse2.GetComponent<AudioSource> ().Pause ();
+		horse2.GetComponent<AudioSource> ().time = 0.0f;
+		mensagem_inicial.SetActive (false);
+		mensagem_audio_frase.SetActive (false);
 		//board2_letter.SetActive(false);
-		board2_letter.GetComponent<Button>().enabled = false;
+		board2_letter.GetComponent<Button> ().enabled = false;
 
-		int auxIdpalavra = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].Id - 1;
+		int auxIdpalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id - 1;
 
-		if (yboard_letter >= -1.7f && 
-			txtBoardLetter.text == bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].letra_correta)
-		{
+		if (yboard_letter >= -1.7f &&
+		    txtBoardLetter.text == bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].letra_correta) {
 
 			respondido = true;
 
-			if (dadosJogo.Instance.currentPesonagem == 2)
-			{
-				cowboy_moving_rope.SetActive(false);
-				cowboy_lacando1.SetActive(true);
-			}
-			else
-			{
-				cowgirl_moving_rope.SetActive(false);
-				cowgirl_lacando1.SetActive(true);
+			if (dadosJogo.Instance.currentPesonagem == 2) {
+				cowboy_moving_rope.SetActive (false);
+				cowboy_lacando1.SetActive (true);
+			} else {
+				cowgirl_moving_rope.SetActive (false);
+				cowgirl_lacando1.SetActive (true);
 			}
 
-			if (bancoPalavras.Instance.palavrasAcerto[auxIdpalavra].acerto != true)   //verificando se palavra já foi respondida corretamente!
-			{
-				bancoPalavras.Instance.palavrasAcerto[auxIdpalavra]= new palavraAcertoUser
-				{
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != true) {   //verificando se palavra já foi respondida corretamente!
+				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
-					idPalavra = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].Id,
+					idPalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id,
 					idUser = dadosJogo.Instance.currentUser.Id,
 					acerto = true,
-					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel+1)
+					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel + 1)
 				};
 
 				++dadosJogo.Instance.currentUser.Score;
 				++bancoPalavras.Instance.acertos;
-				calcula_porcentagem_casa();
-				Debug.Log("Acertos: " + bancoPalavras.Instance.acertos);
+				calcula_porcentagem_casa ();
+				Debug.Log ("Acertos: " + bancoPalavras.Instance.acertos);
 			}
 
-			message_hit.SetActive(true);
-			sound_won.GetComponent<AudioSource>().Play();
-			txtBoardWord.text = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].palavra_completa;
+			message_hit.SetActive (true);
+			sound_won.GetComponent<AudioSource> ().Play ();
+			txtBoardWord.text = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
 			Score.text = "ACERTOS: " + dadosJogo.Instance.currentUser.Score; 
-		}
-		else if (yboard_letter >= -1.7f)
-		{
+		} else if (yboard_letter >= -1.7f) {
 
 			respondido = true;
-			message_error.SetActive(true);
+			message_error.SetActive (true);
 
-			if (dadosJogo.Instance.currentPesonagem == 2)
-			{
-				cowboy_moving_rope.SetActive(false);
-				cowboy_lacando1.SetActive(true);
-			}
-			else
-			{
-				cowgirl_moving_rope.SetActive(false);
-				cowgirl_lacando1.SetActive(true);
+			if (dadosJogo.Instance.currentPesonagem == 2) {
+				cowboy_moving_rope.SetActive (false);
+				cowboy_lacando1.SetActive (true);
+			} else {
+				cowgirl_moving_rope.SetActive (false);
+				cowgirl_lacando1.SetActive (true);
 			}
 
 
-			if (bancoPalavras.Instance.palavrasAcerto[auxIdpalavra].acerto != false)
-			{
-				bancoPalavras.Instance.palavrasAcerto[auxIdpalavra] = new palavraAcertoUser
-				{
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != false) {
+				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
-					idPalavra = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].Id,
+					idPalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id,
 					idUser = dadosJogo.Instance.currentUser.Id,
 					acerto = false,
-					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel+1)
+					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel + 1)
 				};
 
 			}
 
-			sound_lost.GetComponent<AudioSource>().Play();
+			sound_lost.GetComponent<AudioSource> ().Play ();
 
-			txtBoardWord.text = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].palavra_completa;
+			txtBoardWord.text = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
 
 			//++dadosJogo.Instance.erros[dadosJogo.Instance.currentUser.Nivel];
 
 		}
 	}
 
-	//Função criada por Magno
-	/*Essa função permite o salvamento de dados de usuário como id, nome e total de acertos, além de salvar os dados jogados no BD
-	da mesma forma que quando o usuário clica no botão de voltar ao menu inicial no pause
-	Observação: o arquivo será escrito nomeUsuario + "Pontuacao.txt" caso esteja jogado com um usuário que já foi utilizado reescreve 
-	o arquivo, caso seja um novo escreve um novo txt*/
 	public void SalvaDadosJogado(){
-		
+		//Salvar txt para anexo
 		int idUsuario = dadosJogo.Instance.currentUser.Id;
 		string nomeUsuario = dadosJogo.Instance.currentUser.Name;
 		int pontuacaoUsuarioAcerto = dadosJogo.Instance.currentUser.Score;
 
-		StreamWriter sw = new StreamWriter(Application.dataPath + "/Pontuacao/" + nomeUsuario + " - Pontuacao.txt"); 
-		sw.WriteLine("Índice do Usuário: " +  idUsuario);
-		sw.WriteLine("Nome do Usuário: " +  nomeUsuario);
-		sw.WriteLine("Acertos do Usuário: " +  pontuacaoUsuarioAcerto);
-		sw.Close(); 
-		dadosJogo.Instance.salvar_dados();//salvar dados no BD
+		StreamWriter sw = new StreamWriter (Application.persistentDataPath + nomeUsuario + " - Pontuacao.txt");
+		sw.WriteLine ("Id do Usuário: " + idUsuario);
+		sw.WriteLine ("Nome do Usuário: " + nomeUsuario);
+		sw.WriteLine ("Acertos do Usuário: " + pontuacaoUsuarioAcerto);
+		sw.Close ();
 
-		//Enviar e-mail ao terminar de salvar txt e dados no BD
-		StartCoroutine("EnviarEmail");
-	}	
-
+	}
 
 	//Função criada por Magno
 	/*Função para envio automatico de e-mail ao clicar em salvar dados do jogo, o e-mail será enviado para projetograpphia@gmail.com*/
-	public void EnviarEmail(){
+	public void EnviarEmail ()
+	{
+		//Código para enviar email utilizando o protocolo smtp
+		MailMessage mail = new MailMessage ();
+		int idUsuario = dadosJogo.Instance.currentUser.Id;
 		string nomeUsuario = dadosJogo.Instance.currentUser.Name;
+		int pontuacaoUsuarioAcerto = dadosJogo.Instance.currentUser.Score;
 
-		MailMessage mail = new MailMessage();
+		StartCoroutine ("SalvaDadosJogado");
 
-		mail.From = new MailAddress("projetograpphia@gmail.com");
-		mail.To.Add( "projetograpphia@gmail.com");
-		mail.Subject = "Pontuação do usuário: " + nomeUsuario;
-		mail.Body = "Estes são os dados de jogo do(a): "+ nomeUsuario ;
-		mail.Attachments.Add (new Attachment (Application.dataPath + "/Pontuacao/" + nomeUsuario + " - Pontuacao.txt"));//anexo
+		try {
+			mail.From = new MailAddress ("projetograpphia@gmail.com");
+			mail.To.Add ("projetograpphia@gmail.com");
+			mail.Subject = "Pontuação do usuário: " + nomeUsuario;
+			mail.Body = "Estes são os dados de jogo do(a): " + nomeUsuario + "\n\n" + "Id do usuário: " + idUsuario + "\n" + "Nome do Usuário: " + nomeUsuario + "\n" + "Acertos do Usuário: " + pontuacaoUsuarioAcerto + "\n";
+			mail.Attachments.Add (new Attachment (Application.persistentDataPath + nomeUsuario + " - Pontuacao.txt"));//anexo
 
-		SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
-		smtpServer.Port = 587;
-		smtpServer.Credentials = (ICredentialsByHost) new System.Net.NetworkCredential("projetograpphia@gmail.com", "grapphia2017");
-		smtpServer.EnableSsl = true;
-		ServicePointManager.ServerCertificateValidationCallback = 
-			delegate(object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) 
-		{ return true; };
-		smtpServer.Send(mail);
+			SmtpClient smtpServer = new SmtpClient ();
+			smtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
+			smtpServer.Port = 587;
+			smtpServer.Host = "smtp.gmail.com";
+			smtpServer.Credentials = new System.Net.NetworkCredential ("projetograpphia@gmail.com", "grapphia2017") as ICredentialsByHost;
+			smtpServer.EnableSsl = true;
+			ServicePointManager.ServerCertificateValidationCallback = 
+			delegate(object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
+				return true;
+			};
+			smtpServer.Send (mail);
+		} catch (SmtpException ex) {
+			Debug.Log ("Exception: " + ex);
+		}
 	}
 
 	// Quando pressiona a caixa 2!
-	public void pressedButtonLetter2()
+	public void pressedButtonLetter2 ()
 	{
-		horse.GetComponent<AudioSource>().Pause();
-		horse.GetComponent<AudioSource>().time = 0.0f;
-		horse2.GetComponent<AudioSource>().Pause();
-		horse2.GetComponent<AudioSource>().time = 0.0f;
-		mensagem_inicial.SetActive(false);
-		mensagem_audio_frase.SetActive(false);
+		horse.GetComponent<AudioSource> ().Pause ();
+		horse.GetComponent<AudioSource> ().time = 0.0f;
+		horse2.GetComponent<AudioSource> ().Pause ();
+		horse2.GetComponent<AudioSource> ().time = 0.0f;
+		mensagem_inicial.SetActive (false);
+		mensagem_audio_frase.SetActive (false);
 		//board_letter.SetActive(false);
-		board_letter.GetComponent<Button>().enabled = false;
+		board_letter.GetComponent<Button> ().enabled = false;
 
-		int auxIdpalavra = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].Id - 1;
+		int auxIdpalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id - 1;
 
-		if (yboard2_letter >= -1.7f 
-			&& txtBoardLetter2.text == bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].letra_correta)
-		{
+		if (yboard2_letter >= -1.7f
+		    && txtBoardLetter2.text == bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].letra_correta) {
 
 			respondido = true;
 
-			if (dadosJogo.Instance.currentPesonagem == 2)
-			{
-				cowboy_moving_rope.SetActive(false);
-				cowboy_lacando2.SetActive(true);
-			}
-			else
-			{
-				cowgirl_moving_rope.SetActive(false);
-				cowgirl_lacando2.SetActive(true);
+			if (dadosJogo.Instance.currentPesonagem == 2) {
+				cowboy_moving_rope.SetActive (false);
+				cowboy_lacando2.SetActive (true);
+			} else {
+				cowgirl_moving_rope.SetActive (false);
+				cowgirl_lacando2.SetActive (true);
 			}
 
-			if (bancoPalavras.Instance.palavrasAcerto[auxIdpalavra].acerto != true)
-			{
-				bancoPalavras.Instance.palavrasAcerto[auxIdpalavra] = new palavraAcertoUser
-				{
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != true) {
+				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
-					idPalavra = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].Id,
+					idPalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id,
 					idUser = dadosJogo.Instance.currentUser.Id,
 					acerto = true,
-					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel+1)
+					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel + 1)
 				};
 
 				++dadosJogo.Instance.currentUser.Score;
 				++bancoPalavras.Instance.acertos;
-				calcula_porcentagem_casa();
-				Debug.Log("Acertos: " + bancoPalavras.Instance.acertos);
+				calcula_porcentagem_casa ();
+				Debug.Log ("Acertos: " + bancoPalavras.Instance.acertos);
 			}
 
 
-			message_hit.SetActive(true);
-			sound_won.GetComponent<AudioSource>().Play();
-			txtBoardWord.text = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].palavra_completa;
+			message_hit.SetActive (true);
+			sound_won.GetComponent<AudioSource> ().Play ();
+			txtBoardWord.text = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
 
 			Score.text = "ACERTOS: " + dadosJogo.Instance.currentUser.Score;
-		}
-		else if (yboard2_letter >= -1.7f)
-		{
-			horse.GetComponent<AudioSource>().Pause();
+		} else if (yboard2_letter >= -1.7f) {
+			horse.GetComponent<AudioSource> ().Pause ();
 			respondido = true;
-			message_error.SetActive(true);
+			message_error.SetActive (true);
 
-			if (dadosJogo.Instance.currentPesonagem == 2)
-			{
-				cowboy_moving_rope.SetActive(false);
-				cowboy_lacando2.SetActive(true);
-			}
-			else
-			{
-				cowgirl_moving_rope.SetActive(false);
-				cowgirl_lacando2.SetActive(true);
+			if (dadosJogo.Instance.currentPesonagem == 2) {
+				cowboy_moving_rope.SetActive (false);
+				cowboy_lacando2.SetActive (true);
+			} else {
+				cowgirl_moving_rope.SetActive (false);
+				cowgirl_lacando2.SetActive (true);
 			}
 
-			if (bancoPalavras.Instance.palavrasAcerto[auxIdpalavra].acerto != false)
-			{
-				bancoPalavras.Instance.palavrasAcerto[auxIdpalavra] = new palavraAcertoUser
-				{
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != false) {
+				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
-					idPalavra = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].Id,
+					idPalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id,
 					idUser = dadosJogo.Instance.currentUser.Id,
 					acerto = false,
-					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel+1)
+					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel + 1)
 				};
 
 			}
 
-			sound_lost.GetComponent<AudioSource>().Play();
-			txtBoardWord.text = bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].palavra_completa;
+			sound_lost.GetComponent<AudioSource> ().Play ();
+			txtBoardWord.text = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
 
 			//++dadosJogo.Instance.erros[dadosJogo.Instance.currentUser.Nivel]; 
 
@@ -800,7 +750,7 @@ public class gameController : MonoBehaviour {
 	}
 
 
-	public void pressedAudioFrase()
+	public void pressedAudioFrase ()
 	{
 		
 		if (dadosJogo.Instance.currentPesonagem == 2) {	
@@ -830,33 +780,32 @@ public class gameController : MonoBehaviour {
 
 
 	// Função de quando pressiona o botão pause!
-	public void pressedPause()
+	public void pressedPause ()
 	{
 
-		if (fimJogo) menu_pause.SetActive(true);
-		else
-		{
-			if (Time.timeScale == 0f)
-			{
+		if (fimJogo)
+			menu_pause.SetActive (true);
+		else {
+			if (Time.timeScale == 0f) {
 				Time.timeScale = 1f;
-				bird1.GetComponent<AudioSource>().Play();
-				if (dadosJogo.Instance.currentPesonagem == 1) cowgirl_moving_rope.SetActive(true);
-				else cowboy_moving_rope.SetActive(true);
+				bird1.GetComponent<AudioSource> ().Play ();
+				if (dadosJogo.Instance.currentPesonagem == 1)
+					cowgirl_moving_rope.SetActive (true);
+				else
+					cowboy_moving_rope.SetActive (true);
 
-				menu_pause.SetActive(false);
-				board_letter.SetActive(true);
-				board2_letter.SetActive(true);
-			}
-			else
-			{
+				menu_pause.SetActive (false);
+				board_letter.SetActive (true);
+				board2_letter.SetActive (true);
+			} else {
 				Time.timeScale = 0f;
-				bird1.GetComponent<AudioSource>().Pause();
-				horse.GetComponent<AudioSource>().Pause();
-				horse2.GetComponent<AudioSource>().Pause();
-				cowboy_moving_rope.SetActive(false);
-				menu_pause.SetActive(true);
-				board_letter.SetActive(false);
-				board2_letter.SetActive(false);
+				bird1.GetComponent<AudioSource> ().Pause ();
+				horse.GetComponent<AudioSource> ().Pause ();
+				horse2.GetComponent<AudioSource> ().Pause ();
+				cowboy_moving_rope.SetActive (false);
+				menu_pause.SetActive (true);
+				board_letter.SetActive (false);
+				board2_letter.SetActive (false);
 
 			}
 		}
@@ -864,63 +813,64 @@ public class gameController : MonoBehaviour {
 	}
 
 	// Retornar o jogo quando o jogo está pausado!
-	public void btnClick_Return()
+	public void btnClick_Return ()
 	{
 
-		if (fimJogo) menu_pause.SetActive(false);
-		else
-		{
+		if (fimJogo)
+			menu_pause.SetActive (false);
+		else {
 			Time.timeScale = 1f;
-			bird1.GetComponent<AudioSource>().Play();
+			bird1.GetComponent<AudioSource> ().Play ();
 
-			if (dadosJogo.Instance.currentPesonagem == 1) cowgirl_moving_rope.SetActive(true);
-			else cowboy_moving_rope.SetActive(true);
+			if (dadosJogo.Instance.currentPesonagem == 1)
+				cowgirl_moving_rope.SetActive (true);
+			else
+				cowboy_moving_rope.SetActive (true);
 
-			menu_pause.SetActive(false);
-			board_letter.SetActive(true);
-			board2_letter.SetActive(true);
+			menu_pause.SetActive (false);
+			board_letter.SetActive (true);
+			board2_letter.SetActive (true);
 		}
 
 	}
 
 	// Ir para o menu inicial!
-	public void btnClick_MenuInicial()
+	public void btnClick_MenuInicial ()
 	{
 		Time.timeScale = 1f;
 
-		dadosJogo.Instance.salvar_dados();
-		SceneManager.LoadScene("TelaInicialOpcoes");
+		dadosJogo.Instance.salvar_dados ();
+		SceneManager.LoadScene ("TelaInicialOpcoes");
 	}
 
 
-	public void btnSoundClick()
+	public void btnSoundClick ()
 	{
 		// Função que bloqueia e ativa o som!
-		var audio = bird1.GetComponent<AudioSource>();
-		if (audio.isPlaying)
-		{
-			sound_on.SetActive(false);
-			audio.Pause();
-			horse.GetComponent<AudioSource>().Stop();
-			horse2.GetComponent<AudioSource>().Stop();
-			sound_off.SetActive(true);
-			sound_won.SetActive(false);
-			sound_lost.SetActive(false);
+		var audio = bird1.GetComponent<AudioSource> ();
+		if (audio.isPlaying) {
+			sound_on.SetActive (false);
+			audio.Pause ();
+			horse.GetComponent<AudioSource> ().Stop ();
+			horse2.GetComponent<AudioSource> ().Stop ();
+			sound_off.SetActive (true);
+			sound_won.SetActive (false);
+			sound_lost.SetActive (false);
 
 
-		}
-		else
-		{
-			sound_on.SetActive(true);
-			audio.UnPause();
-			horse.GetComponent<AudioSource>().Play();
-			horse2.GetComponent<AudioSource>().Play();
+		} else {
+			sound_on.SetActive (true);
+			audio.UnPause ();
+			horse.GetComponent<AudioSource> ().Play ();
+			horse2.GetComponent<AudioSource> ().Play ();
 
-			if(xHorse > 9.52f) horse.GetComponent<AudioSource>().Pause();
-			if (xHorse2 > 9.52f) horse2.GetComponent<AudioSource>().Pause();
-			sound_off.SetActive(false);
-			sound_won.SetActive(true);
-			sound_lost.SetActive(true);
+			if (xHorse > 9.52f)
+				horse.GetComponent<AudioSource> ().Pause ();
+			if (xHorse2 > 9.52f)
+				horse2.GetComponent<AudioSource> ().Pause ();
+			sound_off.SetActive (false);
+			sound_won.SetActive (true);
+			sound_lost.SetActive (true);
 
 		}
 	}
