@@ -4,9 +4,11 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 
 // Classe que controla todos os elementos gráficos do jogo!
-public class ditado : MonoBehaviour {
+public class ditado : MonoBehaviour
+{
 
-	public GameObject animacaoProfessora;//para animação de professora
+	public GameObject animacaoProfessora;
+	//para animação de professora
 
 	private int idPalavra;
 
@@ -20,38 +22,43 @@ public class ditado : MonoBehaviour {
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Inicializa a tela do jogo!
-	void Start () {
-		idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words); // Random para colocar palavra inicial aleatória
-		Debug.Log(idPalavra);
+	void Start ()
+	{
+		
 	}
 
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Vai ser chamada a cada frame por segundo!
-	void FixedUpdate () {
-//			this.setPalavra(dadosJogo.Instance.currentUser.Nivel);
+	void FixedUpdate ()
+	{
+		
 	}
 
-	public void PegaTexto(){
-		string palavraAnalisada = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
-		//Palavra digitada:
-		string texto = textoDigitado.text;
-		string upperString = texto.ToUpper ();//tornar os caracteres maiusculos assim como no BD
+	public void PegaTexto ()
+	{
+			idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words); // Random para colocar palavra inicial aleatória
+			string palavraAnalisada = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
+			//Palavra digitada:
+			string texto = textoDigitado.text;
+			string upperString = texto.ToUpper ();//tornar os caracteres maiusculos assim como no BD
 
-		if (palavraAnalisada == upperString) {
-			Debug.Log ("Acertou");
-			acertoPalavra++;
-		} else {
-			Debug.Log ("Errou");
-			erroPalavra++;
-		}
-
+			if (palavraAnalisada == upperString) {
+				Debug.Log ("Acertou");
+				acertoPalavra++;
+			} else {
+				Debug.Log ("Errou");
+				erroPalavra++;
+			}
 	}
 
-	public void pressedAudioPalavra(){
+	public void pressedAudioPalavra ()
+	{
+		//Para animação
 		StartCoroutine ("audioEnd");
-		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].nome_audio_ditado;
+
+		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].nome_audio_ditado;
 
 		AudioClip clip = (AudioClip)Resources.Load (arquivo);
 		AudioSource audio;
@@ -59,13 +66,14 @@ public class ditado : MonoBehaviour {
 		audio.volume = 1;
 		audio.clip = clip;
 		audio.Play ();
-		Debug.Log (arquivo);
+
 
 	}
 
-	IEnumerator audioEnd(){
+	IEnumerator audioEnd ()
+	{
 		animacaoProfessora.SetActive (true);
-		string arquivo = "audios/" + bancoPalavras.Instance.palavras[dadosJogo.Instance.currentUser.Nivel][idPalavra].nome_audio_ditado;
+		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].nome_audio_ditado;
 		AudioClip clip = (AudioClip)Resources.Load (arquivo);
 
 		yield return new WaitForSeconds (clip.length);
