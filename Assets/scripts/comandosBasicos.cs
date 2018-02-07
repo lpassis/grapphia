@@ -18,7 +18,7 @@ public class bancoPalavras
 
 	public int qtd_WordsPresented; //quantidade de palavras recuperadas no BD que determinado usuário já jogou
 
-	public int numWordsGame = 15; //número de palavras que serão apresentadas para o usuário em cada nível
+	public int numWordsGame = 2; //número de palavras que serão apresentadas para o usuário em cada nível
 
 	public int numWordsDitado = 5; //número de palavras que serão apresentadas para o usuário no ditado
 
@@ -102,7 +102,8 @@ public class bancoPalavras
                 opcao1 = p.opcao1,
                 nivel = p.nivel,
                 nome_audio_menino = p.nome_audio_menino,
-                nome_audio_menina = p.nome_audio_menina
+                nome_audio_menina = p.nome_audio_menina,
+				nome_audio_ditado = p.nome_audio_ditado
             };
 
             ++qtd_Words;
