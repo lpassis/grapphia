@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 // Classe que controla todos os elementos gráficos do jogo!
 public class ditado : MonoBehaviour
@@ -16,8 +17,6 @@ public class ditado : MonoBehaviour
 
 	private int acertoPalavra, erroPalavra;
 
-	int cont;
-
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -30,34 +29,32 @@ public class ditado : MonoBehaviour
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	// Vai ser chamada a cada frame por segundo!
-	void FixedUpdate ()
-	{
-		
-	}
-
-	public void PegaTexto ()
-	{
-		
+	public void PegaTexto (){		
 		string palavraAnalisada = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
-		//Palavra digitada:
 		string texto = textoDigitado.text;
-		string upperString = texto.ToUpper ();//tornar os caracteres maiusculos assim como no BD
+		string upperString = texto.ToUpper ();
 
 		if (palavraAnalisada == upperString) {
 			Debug.Log ("Acertou");
-			acertoPalavra++;
+			++dadosJogo.Instance.currentUser.scoreDitado;
 			textoDigitado.text = "";
+			//Definir o número de palabras do ditado no comandosBasicos.cs
+			if (dadosJogo.Instance.currentUser.scoreDitado == bancoPalavras.Instance.numWordsDitado) {
+				Debug.Log ("Fim do ditado");
+				//SceneManager.LoadScene (); cena de parabéns completou o ditado			
+			}
 		} else {
-			Debug.Log ("Errou");
 			erroPalavra++;
 			textoDigitado.text = "";
 		}
+
+		//Volta para a função void Start() para atualizar o audio
+		StartCoroutine ("Start");
 	}
 
-	IEnumerator pressedAudioPalavra ()
-	{
+	public void pressedAudioPalavra (){
 		animacaoProfessora.SetActive (true);
+		StartCoroutine ("audioEnd");
 		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].nome_audio_ditado;
 
 		AudioClip clip = (AudioClip)Resources.Load (arquivo);
@@ -66,8 +63,13 @@ public class ditado : MonoBehaviour
 		audio.volume = 1;
 		audio.clip = clip;
 		audio.Play ();
+	}	
 
+	IEnumerator audioEnd(){
+		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].nome_audio_ditado;
+
+		AudioClip clip = (AudioClip)Resources.Load (arquivo);
 		yield return new WaitForSeconds (clip.length);
 		animacaoProfessora.SetActive (false);
-	}		
+	}
 }

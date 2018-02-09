@@ -28,7 +28,7 @@ public class createUser : MonoBehaviour {
 			return;
 		};
 
-        data.CreateUser(nome.text, 0,0);
+        data.CreateUser(nome.text, 0,0,0);
 	
 		users = null;
 
@@ -43,7 +43,8 @@ public class createUser : MonoBehaviour {
                 Id = user.Id,
                 Name = user.Name,
                 Score = user.Score,
-                Nivel = user.Nivel
+                Nivel = user.Nivel,
+				scoreDitado = user.scoreDitado,
             };
 
         }

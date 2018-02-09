@@ -50,13 +50,14 @@ public class DataService      // Classe de serviço do banco de dados!
 
     }
     // Inserindo usuário no banco de dados!
-	public user CreateUser(string newUser, int score, int nivel)
+	public user CreateUser(string newUser, int score, int nivel, int scoreDitado)
     {
         var p = new user
         {
             Name = newUser,
             Score = score,
             Nivel = nivel,
+			scoreDitado = scoreDitado,
         };
        _connection.Insert(p);
         return p;
@@ -92,6 +93,8 @@ public class user
     public int Score { get; set; }
 
     public int Nivel { get; set; }
+
+	public int scoreDitado { get; set; }
     
 	public override string ToString()
     {
@@ -177,6 +180,7 @@ public class usuariosJogo : MonoBehaviour {
                     Name = user.Name,
                     Score = user.Score,
                     Nivel = user.Nivel,
+					scoreDitado = user.scoreDitado,
                 };
 
             }
