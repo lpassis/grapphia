@@ -24,34 +24,38 @@ public class ditado : MonoBehaviour
 	void Start ()
 	{
 		idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words); // Random para colocar palavra inicial aleatória
+		Debug.Log(idPalavra);
 	}
 
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+	//Função criada por Magno 
 	public void PegaTexto (){		
 		string palavraAnalisada = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
 		string texto = textoDigitado.text;
-		string upperString = texto.ToUpper ();
+		string upperString = texto.ToUpper();
 
 		if (palavraAnalisada == upperString) {
 			Debug.Log ("Acertou");
 			++dadosJogo.Instance.currentUser.scoreDitado;
 			textoDigitado.text = "";
-			//Definir o número de palabras do ditado no comandosBasicos.cs
-			if (dadosJogo.Instance.currentUser.scoreDitado == bancoPalavras.Instance.numWordsDitado) {
-				Debug.Log ("Fim do ditado");
-				//SceneManager.LoadScene (); cena de parabéns completou o ditado			
-			}
 		} else {
 			erroPalavra++;
 			textoDigitado.text = "";
 		}
 
-		//Volta para a função void Start() para atualizar o audio
+		bancoPalavras.Instance.numWordsDitado--;
 		StartCoroutine ("Start");
+
+		//Definir o numero de palavras no ditado no comandosBasicos.cs
+		if (bancoPalavras.Instance.numWordsDitado == 0) {
+			Debug.Log ("Fim do ditado");
+			SceneManager.LoadScene ("telaFimJogo");
+		}
 	}
 
+	//Função criada por Magno
 	public void pressedAudioPalavra (){
 		animacaoProfessora.SetActive (true);
 		StartCoroutine ("audioEnd");

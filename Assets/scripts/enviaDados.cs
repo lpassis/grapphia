@@ -9,17 +9,14 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
 public class enviaDados : MonoBehaviour {
+	public GameObject somOn;
+	public GameObject somOff;
 
 	// Use this for initialization
 	void Start () {
-		StartCoroutine ("EnviarEmail");
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
+	//Função criada por Magno
 	public void SalvaDadosJogado(){
 		//Salvar txt para anexo
 		int idUsuario = dadosJogo.Instance.currentUser.Id;
@@ -67,5 +64,27 @@ public class enviaDados : MonoBehaviour {
 		} catch (SmtpException ex) {
 			Debug.Log ("Exception: " + ex);
 		}
+
+		SceneManager.LoadScene ("telaEstante");
+	}
+
+	public void click_Sound()
+	{
+		// Função que bloqueia e ativa o som!
+		var compaudio = somOn.GetComponent<AudioSource>();
+
+		if (compaudio.isPlaying)
+		{
+			somOn.SetActive(false);
+			somOn.GetComponent<AudioSource>().Pause();
+			somOff.SetActive(true);
+		}
+		else
+		{
+			somOn.SetActive(true);
+			somOn.GetComponent<AudioSource>().UnPause();
+			somOff.SetActive(false);
+		}
+
 	}
 }

@@ -45,10 +45,9 @@ public class DataService      // Classe de serviço do banco de dados!
         _connection.CreateTable<palavraOpcao>();
         _connection.CreateTable<palavraAcertoUser>();
 
-
-
-
     }
+
+	//Tabela alterada por Magno
     // Inserindo usuário no banco de dados!
 	public user CreateUser(string newUser, int score, int nivel, int scoreDitado)
     {

@@ -2,23 +2,14 @@
 using System.Collections;
 
 public class escolhaPersonagem : MonoBehaviour {
-
-
-    public GameObject somOn;
+	public GameObject somOn;
     public GameObject somOff;
-
-
-   
+	   
     void Start () {
 	
 	}
 	
-	
-	void Update () {
-	
-	}
-
-    public void click_Sound()
+	public void click_Sound()
     {
         // Função que bloqueia e ativa o som!
         var compaudio = somOn.GetComponent<AudioSource>();

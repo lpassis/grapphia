@@ -330,7 +330,7 @@ public class gameController : MonoBehaviour
 				//if((dadosJogo.Instance.currentUser.Score - dadosJogo.Instance.erros[dadosJogo.Instance.currentUser.Nivel]) == ScoreInitial + 10)
 
 				if (countWords <= 0) {
-					SceneManager.LoadScene ("telaFimJogo");
+					SceneManager.LoadScene ("telaPreDitado");
 					Debug.Log ("3) countWords: " + countWords);
 					horse.SetActive (false);
 					horse2.SetActive (false);
