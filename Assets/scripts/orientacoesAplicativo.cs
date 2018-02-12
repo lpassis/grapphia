@@ -3,27 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(AudioSource))]
 public class orientacoesAplicativo : MonoBehaviour {
-	int tempoEspera;
+	private string movie = "video_entrada.mp4";
 
-	// Use this for initialization
-	void Start () {
-		StartCoroutine ("telaEnd");
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		StartCoroutine ("telaEnd");
+	void Start () 
+	{
+		StartCoroutine(streamVideo(movie));
 	}
 
-	IEnumerator telaEnd(){
-		tempoEspera = 5;
-		yield return new WaitForSeconds (tempoEspera);
+	private IEnumerator streamVideo(string video)
+	{
+		
+		Handheld.PlayFullScreenMovie(video, Color.black, FullScreenMovieControlMode.Hidden, FullScreenMovieScalingMode.AspectFill);
+		yield return new WaitForEndOfFrame();
+		//retornar do video antes de terminar a lógica de 
 		SceneManager.LoadScene ("telaInicialOpcoes");
-	}
-
-	//Tela de créditos e sobre aplicativo 
-	public void btnSobreAplicativo (){
-		SceneManager.LoadScene ("");
 	}
 }
