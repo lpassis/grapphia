@@ -127,9 +127,8 @@ public class bancoPalavras
                     idPalavra = p.idPalavra,
                     idUser = p.idUser,
                     acerto = p.acerto,
-                    nivelPalavra = p.nivelPalavra,
-					acertoDitado = p.acertoDitado
-                };
+                    nivelPalavra = p.nivelPalavra
+	            };
 				qtd_WordsPresented++;
             }
         }
@@ -817,9 +816,6 @@ public class palavraAcertoUser
     public bool acerto { get; set; }
 
     public int nivelPalavra { get; set; }
-
-	public int acertoDitado { get; set; }
-
 
 }
 
