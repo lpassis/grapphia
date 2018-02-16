@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,8 +8,6 @@ public class orientacoesDitado : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		AudioSource audio = GetComponent<AudioSource> ();
-		audio.Play ();
 		StartCoroutine ("audioEnd");
 	}
 
