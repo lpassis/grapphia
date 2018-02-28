@@ -17,14 +17,20 @@ public class ditado : MonoBehaviour
 
 	private int acertoPalavra, erroPalavra;
 
+	private int qtd_Palavras_Ditado = bancoPalavras.Instance.ListaIdPalavraAcerto.Count; 
+
+	private int posicao;
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Inicializa a tela do jogo!
 	void Start ()
 	{
-		idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words); // Random para colocar palavra inicial aleatória
-		Debug.Log(idPalavra);
+		Debug.Log (qtd_Palavras_Ditado);
+		posicao = Random.Range (0, qtd_Palavras_Ditado);
+		idPalavra = bancoPalavras.Instance.ListaIdPalavraAcerto[posicao];
+		bancoPalavras.Instance.ListaIdPalavraAcerto.RemoveAt (posicao);
+		qtd_Palavras_Ditado--;
 	}
 
 
@@ -50,7 +56,11 @@ public class ditado : MonoBehaviour
 
 		//Definir o numero de palavras no ditado no comandosBasicos.cs
 		if (bancoPalavras.Instance.numWordsDitado == 0) {
-			Debug.Log ("Fim do ditado");
+			//volta para 5 palavras, caso opte por jogar novamente no mesmo usuário já que essa variável é decrementada
+			//durante o processo do ditado
+			bancoPalavras.Instance.numWordsDitado = 5;
+			//toda vez que o jogo é executado a lista é novamente preenchida com todas as palavras do banco acrescida das palavras do jogo
+			bancoPalavras.Instance.ListaIdPalavraAcerto.Clear();
 			SceneManager.LoadScene ("telaFimJogo");
 		}
 	}

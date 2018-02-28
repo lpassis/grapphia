@@ -212,6 +212,7 @@ public class gameController : MonoBehaviour
 
 		Debug.Log (idPalavra + " e palavra " + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa);
 
+
 		randNum_blocos = Random.Range (1.0f, 2.0f); // Ordem aleatória de entrada dos blocos com as letras 
 
 		this.setPalavra (dadosJogo.Instance.currentUser.Nivel);
@@ -341,6 +342,7 @@ public class gameController : MonoBehaviour
 					fimJogo = true;
 					inteligencia.Instance.seleciona_nivel ();  // SELECIONADO O NÍVEL
 					dadosJogo.Instance.salvar_dados ();
+					//bancoPalavras.Instance.listaIdPalavraAcerto ();
 					return;
 
 				}
@@ -574,7 +576,8 @@ public class gameController : MonoBehaviour
 					acerto = true,
 					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel + 1)
 				};
-
+				bancoPalavras.Instance.qtd_WordsPresented++;
+				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
 				++dadosJogo.Instance.currentUser.Score;
 				++bancoPalavras.Instance.acertos;
 				calcula_porcentagem_casa ();
@@ -607,7 +610,8 @@ public class gameController : MonoBehaviour
 					acerto = false,
 					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel + 1)
 				};
-
+				bancoPalavras.Instance.qtd_WordsPresented++;
+				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
 			}
 
 			sound_lost.GetComponent<AudioSource> ().Play ();
@@ -654,7 +658,8 @@ public class gameController : MonoBehaviour
 					acerto = true,
 					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel + 1)
 				};
-
+				bancoPalavras.Instance.qtd_WordsPresented++;
+				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
 				++dadosJogo.Instance.currentUser.Score;
 				++bancoPalavras.Instance.acertos;
 				calcula_porcentagem_casa ();
@@ -688,7 +693,8 @@ public class gameController : MonoBehaviour
 					acerto = false,
 					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel + 1)
 				};
-
+				bancoPalavras.Instance.qtd_WordsPresented++;
+				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
 			}
 
 			sound_lost.GetComponent<AudioSource> ().Play ();

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using SQLite4Unity3d;
 using UnityEngine.SceneManagement;
 
@@ -12,13 +13,15 @@ public class bancoPalavras
 
     public palavraOpcao[][] palavras;
 
-    public palavraAcertoUser[] palavrasAcerto;
+	public palavraAcertoUser[] palavrasAcerto;
+
+	public List<int> ListaIdPalavraAcerto = new List<int> (); 
 
 	public int qtd_Words; //quantidade de palavras recuperadas no BD de um determinado nível (nível atual do jogador)
 
 	public int qtd_WordsPresented; //quantidade de palavras recuperadas no BD que determinado usuário já jogou
 
-	public int numWordsGame = 2; //número de palavras que serão apresentadas para o usuário em cada nível
+	public int numWordsGame = 5; //número de palavras que serão apresentadas para o usuário em cada nível
 
 	public int numWordsDitado = 5; //número de palavras que serão apresentadas para o usuário no ditado
 
@@ -119,7 +122,8 @@ public class bancoPalavras
             palavrasAcerto = new palavraAcertoUser[(32*aux)];
 
             for (int j = 0; j < (32 * aux); ++j) palavrasAcerto[j] = new palavraAcertoUser();
-            foreach (var p in resul2)
+            
+			foreach (var p in resul2)
             {
                 palavrasAcerto[(p.idPalavra-1)] = new palavraAcertoUser
                 {
@@ -130,6 +134,7 @@ public class bancoPalavras
                     nivelPalavra = p.nivelPalavra
 	            };
 				qtd_WordsPresented++;
+				ListaIdPalavraAcerto.Add(p.idPalavra-1);
             }
         }
         else
@@ -156,6 +161,13 @@ public class bancoPalavras
 
     }
 
+	public void listaIdPalavraAcerto(){
+		foreach (var p in palavrasAcerto) {
+			if (p.idPalavra != 0) {
+				ListaIdPalavraAcerto.Add (p.idPalavra);
+			}
+		}
+	}
 
     public void salvar_palavras_no_banco()      //salva palavras no banco de dados  essa função é chamada apenas quando for criar o banco de dados
 
