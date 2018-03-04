@@ -141,10 +141,6 @@ public class gameController : MonoBehaviour
 	int ScoreInitial;
 	// Armazena o acerto inicial em cada nível!
 
-	//Para controle do botão de salvar os dados
-	public GameObject saveStart;
-	public GameObject saveEnd;
-
 	bool fimJogo;
 	bool contadorAudio;
 	float aux;
