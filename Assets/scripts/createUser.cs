@@ -17,7 +17,8 @@ public class createUser : MonoBehaviour {
     public void create()
     {
         // Conexão com o banco de dados grapphia!
-        DataService data = new DataService("grapphia");
+        DataService data = new DataService();
+		data.EstabeleceConexao ("grapphia");
 
         if (nome.text == "") return;
 

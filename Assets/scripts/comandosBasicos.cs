@@ -39,8 +39,9 @@ public class bancoPalavras
     private bancoPalavras()
     {
 
-        dataservice = new DataService("grapphia");
-        var words2 = dataservice._connection.Table<palavraOpcao>();
+		dataservice = new DataService();
+		dataservice.EstabeleceConexao ("grapphia");
+		var words2 = dataservice._connection.Table<palavraOpcao>();
 
         total_palavras = words2.Count();
 
@@ -161,13 +162,6 @@ public class bancoPalavras
 
     }
 
-	public void listaIdPalavraAcerto(){
-		foreach (var p in palavrasAcerto) {
-			if (p.idPalavra != 0) {
-				ListaIdPalavraAcerto.Add (p.idPalavra);
-			}
-		}
-	}
 
     public void salvar_palavras_no_banco()      //salva palavras no banco de dados  essa função é chamada apenas quando for criar o banco de dados
 

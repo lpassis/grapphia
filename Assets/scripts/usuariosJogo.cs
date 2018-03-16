@@ -14,7 +14,7 @@ public class DataService      // Classe de serviço do banco de dados!
     public SQLiteConnection _connection; // Criando conexão com SQLite!
 
     // Inicializando classe DataService!
-    public DataService(string dbName)
+    public void EstabeleceConexao(string dbName)
     {
 
         var filepath = string.Format("{0}/{1}", Application.persistentDataPath, dbName);
@@ -78,6 +78,7 @@ public class DataService      // Classe de serviço do banco de dados!
         };
         _connection.Delete(u);
     }
+		
 }
 
 
@@ -116,7 +117,9 @@ public class usuariosJogo : MonoBehaviour {
     // Inicialização da tela usuariosJogo!
     void Start () {
 
-        data = new DataService("grapphia");
+		DataService data = new DataService();
+		data.EstabeleceConexao ("grapphia");
+
         IEnumerable<user> users = data._connection.Table<user>(); 
 
 
@@ -142,6 +145,8 @@ public class usuariosJogo : MonoBehaviour {
     // função para remover usuários!
     public void removeUser()
     {
+	   DataService data = new DataService();
+	   data.EstabeleceConexao ("grapphia");
 
        var users = data._connection.Table<user>().Where(x => x.Name == Users.captionText.text);
 
@@ -162,6 +167,8 @@ public class usuariosJogo : MonoBehaviour {
     // Função ir para próxima tela!
     public void next()
     {
+		DataService data = new DataService();
+		data.EstabeleceConexao ("grapphia");
 
         if (Users.captionText.text == "") return;
         else
