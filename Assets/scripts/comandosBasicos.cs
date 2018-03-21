@@ -25,7 +25,7 @@ public class bancoPalavras
 
 	public int numWordsGame = 15; //número de palavras que serão apresentadas para o usuário em cada nível
 
-	public int numWordsDitado = 10; //número de palavras que serão apresentadas para o usuário no ditado
+	public int numWordsDitado = 7; //número de palavras que serão apresentadas para o usuário no ditado
 
     public DataService dataservice;
 
