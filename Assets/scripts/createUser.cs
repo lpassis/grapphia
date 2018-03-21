@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.IO;
+using SQLite4Unity3d;
 using UnityEngine.SceneManagement;
 
 public class createUser : MonoBehaviour {
@@ -10,24 +12,46 @@ public class createUser : MonoBehaviour {
 
     public GameObject somOn; // Opção ativar e desativar som!
     public GameObject somOff;
+	public SQLiteConnection _connection;
 
+	public void Start(){
+		// Conexão com o banco de dados grapphia!
+		var filepath = string.Format("{0}/{1}", Application.persistentDataPath, "grapphia");
 
+		if (!File.Exists(filepath))
+		{
+
+			var loadDb = new WWW("jar:file://" + Application.dataPath + "!/assets/" + "grapphia");  
+
+			while (!loadDb.isDone) { }  
+
+			File.WriteAllBytes(filepath, loadDb.bytes);
+		}
+
+		var dbPath = filepath;
+
+		_connection = new SQLiteConnection(dbPath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
+
+		Debug.Log("Final PATH: " + dbPath);
+		//Criando tabela usuário e tabela opção!
+		_connection.CreateTable<user>();
+		_connection.CreateTable<palavraOpcao>();
+		_connection.CreateTable<palavraAcertoUser>();
+	}
 
     // Função para criar usuário!
     public void create()
     {
-        // Conexão com o banco de dados grapphia!
-        DataService data = new DataService("grapphia");
-
         if (nome.text == "") return;
 
-		var users = data._connection.Table<user>().Where(x => x.Name == nome.text);
+		var users = _connection.Table<user>().Where(x => x.Name == nome.text);
 
 		if (users.Count () >= 1) {;
 			SceneManager.LoadScene ("telaUsuarioCadastrado");
 			return;
 		};
 
+		DataService data = new DataService(_connection);
         data.CreateUser(nome.text, 0,0,0);
 	
 		users = null;

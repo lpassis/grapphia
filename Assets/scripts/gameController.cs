@@ -125,7 +125,7 @@ public class gameController : MonoBehaviour
 	private float xboard2_letter_initial;
 	private float yboard2_letter_initial;
 
-
+	private int idPalavraAnt;
 	private int idPalavra;
 	// Utilizado para identificar qual é a palavra corrente!
 
@@ -203,7 +203,7 @@ public class gameController : MonoBehaviour
 		bancoPalavras.Instance.carrega_palavras_nivel (dadosJogo.Instance.currentUser.Nivel);
 
 		countWords = bancoPalavras.Instance.numWordsGame; //quantidade de palavras apresentadas ao usuário
-
+		idPalavraAnt = idPalavra;
 		idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words); // Random para colocar palavra inicial aleatória
 
 		Debug.Log (idPalavra + " e palavra " + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa);
@@ -320,7 +320,7 @@ public class gameController : MonoBehaviour
 					cowgirl_moving_rope.SetActive (true);
 
 				}
-
+				idPalavraAnt = idPalavra;
 				idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words);
 				randNum_blocos = Random.Range (1.0f, 2.0f);
 
@@ -336,7 +336,7 @@ public class gameController : MonoBehaviour
 					cowboy_moving_rope.SetActive (false);
 					cowgirl_moving_rope.SetActive (false);
 					fimJogo = true;
-					inteligencia.Instance.seleciona_nivel ();  // SELECIONADO O NÍVEL
+					//inteligencia.Instance.seleciona_nivel ();  // SELECIONADO O NÍVEL
 					dadosJogo.Instance.salvar_dados ();
 					//bancoPalavras.Instance.listaIdPalavraAcerto ();
 					return;
@@ -373,45 +373,32 @@ public class gameController : MonoBehaviour
 
 	}
 
-
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Função para mudar palavra na caixa!
 	public void setPalavra (int nivel)
 	{
-		int countLoop = 0;
+		idPalavraAnt = idPalavra;
+		idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words);
 
-		setPalavra:
+		int aux = bancoPalavras.Instance.palavras [nivel][idPalavra].Id - 1;
 
-		++countLoop;
+		txtBoardWord.text = bancoPalavras.Instance.palavras[nivel][idPalavra].palavra;
 
-		int aux = bancoPalavras.Instance.palavras [nivel] [idPalavra].Id - 1;
-
-		if (bancoPalavras.Instance.palavrasAcerto [aux].acerto != true ||
-		    countLoop > bancoPalavras.Instance.total_palavras) {
-
-			txtBoardWord.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].palavra;
-
-			if (randNum_blocos > 1.5f) {
-				txtBoardLetter.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].letra_correta;
-				txtBoardLetter2.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].opcao1;
-			} else {
-				txtBoardLetter2.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].letra_correta;
-				txtBoardLetter.text = bancoPalavras.Instance.palavras [nivel] [idPalavra].opcao1;
-
-			}
+		if (randNum_blocos > 1.5f) {
+			txtBoardLetter.text = bancoPalavras.Instance.palavras[nivel][idPalavra].letra_correta;
+			txtBoardLetter2.text = bancoPalavras.Instance.palavras[nivel][idPalavra].opcao1;
 		} else {
-			
-			idPalavra = Random.Range (0, bancoPalavras.Instance.qtd_Words);
-			goto setPalavra;
+			txtBoardLetter2.text = bancoPalavras.Instance.palavras[nivel][idPalavra].letra_correta;
+			txtBoardLetter.text = bancoPalavras.Instance.palavras[nivel][idPalavra].opcao1;
 		}
-		--countWords;
+
+		countWords--;
 		Debug.Log ("1) countWords: " + countWords);
 	}
 
 	public void calcula_porcentagem_casa ()
 	{
-
 		Debug.Log ("Score" + dadosJogo.Instance.currentUser.Score);
 		Debug.Log ("total_palavras" + bancoPalavras.Instance.total_palavras);
 		//double p = (double) dadosJogo.Instance.currentUser.Score / (bancoPalavras.Instance.total_palavras / 10);
@@ -705,7 +692,10 @@ public class gameController : MonoBehaviour
 
 	public void pressedAudioFrase ()
 	{
-		
+		/*if (idPalavra == idPalavraAnt)
+			return;*/
+
+		idPalavraAnt = idPalavra;
 		if (dadosJogo.Instance.currentPesonagem == 2) {	
 			
 			string arquivo = "audios/" + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].nome_audio_menino;

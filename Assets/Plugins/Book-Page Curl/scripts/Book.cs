@@ -20,6 +20,7 @@ public class Book : MonoBehaviour {
     //represent the index of the sprite shown in the right page
     public int currentPage = 0;
 	public int currentAudio = 0;
+	AudioSource audio; 
     public int TotalPageCount
     {
         get { return bookPages.Length; }
@@ -90,6 +91,7 @@ public class Book : MonoBehaviour {
         Shadow.rectTransform.sizeDelta = new Vector2(scaledPageWidth, scaledPageHeight + scaledPageWidth * 0.6f);
         ShadowLTR.rectTransform.sizeDelta = new Vector2(scaledPageWidth, scaledPageHeight + scaledPageWidth * 0.6f);
         NextPageClip.rectTransform.sizeDelta = new Vector2(scaledPageWidth, scaledPageHeight + scaledPageWidth * 0.6f);
+		audio = gameObject.AddComponent<AudioSource> ();
     }
     public Vector3 transformPoint(Vector3 global)
     {
@@ -338,6 +340,7 @@ public class Book : MonoBehaviour {
     }
     void Flip()
     {
+		audio.Pause ();
 		if (mode == FlipMode.RightToLeft) {
 			currentPage += 2;
 			currentAudio++;
@@ -346,8 +349,6 @@ public class Book : MonoBehaviour {
 			currentAudio--;
 		}
 
-		AudioSource audio = gameObject.AddComponent<AudioSource>();
-	
 		audio.volume = 1;
 		audio.clip = audioPages [currentAudio];
 		audio.Play();    

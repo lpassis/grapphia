@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using SQLite4Unity3d;
 using UnityEngine.SceneManagement;
 
+
 // Classe Singleton onde armazena as palavras!
-public class bancoPalavras
+public class bancoPalavras 
 {
     // Matriz das palavras, cada linha da matriz é um nível e cada coluna é uma palavra!
 
@@ -21,7 +23,7 @@ public class bancoPalavras
 
 	public int qtd_WordsPresented; //quantidade de palavras recuperadas no BD que determinado usuário já jogou
 
-	public int numWordsGame = 5; //número de palavras que serão apresentadas para o usuário em cada nível
+	public int numWordsGame = 15; //número de palavras que serão apresentadas para o usuário em cada nível
 
 	public int numWordsDitado = 5; //número de palavras que serão apresentadas para o usuário no ditado
 
@@ -33,33 +35,31 @@ public class bancoPalavras
 
 	public int maxLevel = 1; //quantidade de níveis (mundos) implementados
 
-
+	public SQLiteConnection _connection;
 
     // Construtor da classe!
     private bancoPalavras()
     {
-
-        dataservice = new DataService("grapphia");
-        var words2 = dataservice._connection.Table<palavraOpcao>();
-
-        total_palavras = words2.Count();
-
-		Debug.Log ("Total de palavras no BD: " + total_palavras);
-
+		
     }
 
     // Atributo estático!
-    public static bancoPalavras Instance
+	public static bancoPalavras Instance
     {
-        get
+		get
         {
             if (instance == null)
             {
-                instance = new bancoPalavras();
+				instance = new bancoPalavras();
             }
             return instance;
         }
+
     }
+
+	public void setTotPalavras(int total_palavras){
+		this.total_palavras = total_palavras;
+	}
 
 	/** Função que busca no banco de dados um conjunto de palavras do nível especificado
 	 * level: indica o nível das palavras que será feita a busca no BD
@@ -76,10 +76,10 @@ public class bancoPalavras
 		Debug.Log ("Selecionando palavras do nível (valor do BD) " + aux);
 
         //Buscando palavras do nível AUX
-		var resul = dataservice._connection.Table<palavraOpcao>().Where(x => x.nivel == aux);
+		var resul = _connection.Table<palavraOpcao>().Where(x => x.nivel == aux);
 
 		//Busca palavras do nível AUX e usuário específico
-        var resul2 = dataservice._connection.Table<palavraAcertoUser>().Where(x => ((x.nivelPalavra == aux) && (x.idUser == dadosJogo.Instance.currentUser.Id)));
+        var resul2 = _connection.Table<palavraAcertoUser>().Where(x => ((x.nivelPalavra == aux) && (x.idUser == dadosJogo.Instance.currentUser.Id)));
 
         qtd_Words = 0;
 		qtd_WordsPresented = 0;
@@ -154,20 +154,13 @@ public class bancoPalavras
         {
             if (palavrasAcerto[i].idPalavra > 0 && palavrasAcerto[i].Id > 0)
             {
-               dataservice._connection.Update(palavrasAcerto[i]);
+               _connection.Update(palavrasAcerto[i]);
             }
-            else if (palavrasAcerto[i].idPalavra > 0) dataservice._connection.Insert(palavrasAcerto[i]);
+            else if (palavrasAcerto[i].idPalavra > 0) _connection.Insert(palavrasAcerto[i]);
         }
 
     }
 
-	public void listaIdPalavraAcerto(){
-		foreach (var p in palavrasAcerto) {
-			if (p.idPalavra != 0) {
-				ListaIdPalavraAcerto.Add (p.idPalavra);
-			}
-		}
-	}
 
     public void salvar_palavras_no_banco()      //salva palavras no banco de dados  essa função é chamada apenas quando for criar o banco de dados
 
@@ -472,257 +465,11 @@ public class bancoPalavras
 		palavras[0][31].nome_audio_menina = "avisemenina";
 		palavras[0][31].nome_audio_ditado = "aviseditado";
 
-		/** NIVEIS AINDA DESATIVADOS **/
-
-		// NÍVEL 2 - Palavras com U e L!
-        /*palavras[1][0].palavra = "PAPE _";
-        palavras[1][0].letra_correta = "L";
-        palavras[1][0].opcao1 = "U";
-        palavras[1][0].palavra_completa = "PAPEL"; //O papel molhou?
-        palavras[1][0].nivel = 2;
-        palavras[1][0].nome_audio_menino = "";
-        palavras[1][0].nome_audio_menina = "";
-
-          palavras[1][1].palavra = "DESAGRADÁVE _";
-          palavras[1][1].letra_correta = "L";
-          palavras[1][1].opcao1 = "U";
-          palavras[1][1].palavra_completa = "DESAGRADÁVEL"; //Isso é desagradável!!!
-          palavras[1][1].nivel = 2;
-          palavras[1][1].nome_audio_menino = "";
-          palavras[1][1].nome_audio_menina = "";
-
-          palavras[1][2].palavra = "LEGA _";
-          palavras[1][2].letra_correta = "L";
-          palavras[1][2].opcao1 = "U";
-          palavras[1][2].palavra_completa = "LEGAL"; //Isso é legal, adoro o carnaval!!!
-          palavras[1][2].nivel = 2;
-          palavras[1][2].nome_audio_menino = "";
-          palavras[1][2].nome_audio_menina = "";
-
-          palavras[1][3].palavra = "CARACO _";
-          palavras[1][3].letra_correta = "L";
-          palavras[1][3].opcao1 = "U";
-          palavras[1][3].palavra_completa = "CARACOL"; //O caracol é nojento! Eca!!!
-          palavras[1][3].nivel = 2;
-          palavras[1][3].nome_audio_menino = "";
-          palavras[1][3].nome_audio_menina = "";
-
-          palavras[1][4].palavra = "ANE _";
-          palavras[1][4].letra_correta = "L";
-          palavras[1][4].opcao1 = "U";
-          palavras[1][4].palavra_completa = "ANEL"; //Nossa! Que anel lindo!!!
-          palavras[1][4].nivel = 2;
-          palavras[1][4].nome_audio_menino = "";
-          palavras[1][4].nome_audio_menina = "";
-
-          palavras[1][5].palavra = "ÁLCOO _";
-          palavras[1][5].letra_correta = "L";
-          palavras[1][5].opcao1 = "U";
-          palavras[1][5].palavra_completa = "ÁLCOOL"; //Que cheiro do álcool ruim!
-          palavras[1][5].nivel = 2;
-          palavras[1][5].nome_audio_menino = "";
-          palavras[1][5].nome_audio_menina = "";
-
-          palavras[1][6].palavra = "GO_";
-          palavras[1][6].letra_correta = "L";
-          palavras[1][6].opcao1 = "U";
-          palavras[1][6].palavra_completa = "GOL"; //E é gol do Atlético Mineiro!
-          palavras[1][6].nivel = 2;
-          palavras[1][6].nome_audio_menino = "";
-          palavras[1][6].nome_audio_menina = "";
-
-          palavras[1][7].palavra = "SO _";
-          palavras[1][7].letra_correta = "L";
-          palavras[1][7].opcao1 = "U";
-          palavras[1][7].palavra_completa = "SOL"; //A Terra gira em torno do Sol.
-          palavras[1][7].nivel = 2;
-          palavras[1][7].nome_audio_menino = "";
-          palavras[1][7].nome_audio_menina = "";
-
-          palavras[1][8].palavra = "CANA _";
-          palavras[1][8].letra_correta = "L";
-          palavras[1][8].opcao1 = "U";
-          palavras[1][8].palavra_completa = "CANAL"; //Mudei de canal para ver o filme.
-          palavras[1][8].nivel = 2;
-          palavras[1][8].nome_audio_menino = "";
-          palavras[1][8].nome_audio_menina = "";
-
-          palavras[1][9].palavra = "PA _OS";
-          palavras[1][9].letra_correta = "SS";
-          palavras[1][9].opcao1 = "Ç";
-          palavras[1][9].palavra_completa = "PASSOS"; //Os meus passos são grandes!    10 %
-          palavras[1][9].nivel = 2;
-          palavras[1][9].nome_audio_menino = "";
-          palavras[1][9].nome_audio_menina = "";
-
-        // NÍVEL 3 - G e J!
-        palavras[2][0].palavra = " _ IRAFA";
-          palavras[2][0].letra_correta = "G";
-          palavras[2][0].opcao1 = "J";
-          palavras[2][0].palavra_completa = "GIRAFA"; //Eu vi uma girafa.
-          palavras[2][0].nivel = 3;
-          palavras[2][0].nome_audio_menino = "";
-          palavras[2][0].nome_audio_menina = "";
-
-        palavras[2][1].palavra = "HO _ E";
-          palavras[2][1].letra_correta = "J";
-          palavras[2][1].opcao1 = "G";
-          palavras[2][1].palavra_completa = "HOJE"; //Hoje está super gelado. Brrrrrr!!!
-          palavras[2][1].nivel = 3;
-          palavras[2][1].nome_audio_menino = "";
-          palavras[2][1].nome_audio_menina = "";
-
-        palavras[2][2].palavra = "MA _ ESTADE";
-          palavras[2][2].letra_correta = "J";
-          palavras[2][2].opcao1 = "G";
-          palavras[2][2].palavra_completa = "MAJESTADE"; //Vossa majestade, tu mandas em tudo? Podes ordenar um pôr do Sol?
-          palavras[2][2].nivel = 3;
-          palavras[2][2].nome_audio_menino = "";
-          palavras[2][2].nome_audio_menina = "";
-
-        palavras[2][3].palavra = "MÁ _ ICA";
-          palavras[2][3].letra_correta = "G";
-          palavras[2][3].opcao1 = "J";
-          palavras[2][3].palavra_completa = "MÁGICA"; //A festa de ontem foi mágica.
-          palavras[2][3].nivel = 3;
-          palavras[2][3].nome_audio_menino = "";
-          palavras[2][3].nome_audio_menina = "";
-
-        palavras[2][4].palavra = "ZOOLÓ _ ICO";
-          palavras[2][4].letra_correta = "G";
-          palavras[2][4].opcao1 = "J";
-          palavras[2][4].palavra_completa = "ZOOLÓGICO"; //O zoológico é maneiro!
-          palavras[2][4].nivel = 3;
-          palavras[2][4].nome_audio_menino = "";
-          palavras[2][4].nome_audio_menina = "";
-
-        palavras[2][5].palavra = "PÁ _ INA";
-          palavras[2][5].letra_correta = "G";
-          palavras[2][5].opcao1 = "J";
-          palavras[2][5].palavra_completa = "PÁGINA"; //Essa página está rasgada.
-          palavras[2][5].nivel = 3;
-          palavras[2][5].nome_audio_menino = "";
-          palavras[2][5].nome_audio_menina = "";
-
-        palavras[2][6].palavra = "_ ENTE";
-          palavras[2][6].letra_correta = "G";
-          palavras[2][6].opcao1 = "J";
-          palavras[2][6].palavra_completa = "GENTE"; //Ei, gente! Vocês não vão dançar? Isso é um baile.
-          palavras[2][6].nivel = 3;
-          palavras[2][6].nome_audio_menino = "";
-          palavras[2][6].nome_audio_menina = "";
-
-        palavras[2][7].palavra = " _ ILÓ";
-          palavras[2][7].letra_correta = "J";
-          palavras[2][7].opcao1 = "G";
-          palavras[2][7].palavra_completa = "JILÓ"; //Eu comi jiló.
-          palavras[2][7].nivel = 3;
-          palavras[2][7].nome_audio_menino = "";
-          palavras[2][7].nome_audio_menina = "";
-
-        palavras[2][8].palavra = "PO _ O";
-          palavras[2][8].letra_correta = "Ç";
-          palavras[2][8].opcao1 = "SS";
-          palavras[2][8].palavra_completa = "POÇO"; //Vamos procurar um poço? 10%
-          palavras[2][8].nivel = 3;
-          palavras[2][8].nome_audio_menino = "";
-          palavras[2][8].nome_audio_menina = "";
-
-        palavras[2][9].palavra = "SO _";
-          palavras[2][9].letra_correta = "L";
-          palavras[2][9].opcao1 = "U";
-          palavras[2][9].palavra_completa = "SOL"; //A Terra gira em torno do Sol. 10%
-          palavras[2][9].nivel = 3;
-          palavras[2][9].nome_audio_menino = "";
-          palavras[2][9].nome_audio_menina = "";
-
-        // NÍVEL 4 - Palavras com S e Z!
-        palavras[3][0].palavra = "TRE _ E"; // Palavra a ser completada!
-        palavras[3][0].letra_correta = "Z"; // Letra correta!
-        palavras[3][0].opcao1 = "S"; // Segunda opção!
-        palavras[3][0].palavra_completa = "TREZE"; // Palavra completa! Eu tenho treze anos.
-        palavras[3][0].nivel = 4; // Nível da palavra!
-        palavras[3][0].nome_audio_menino = "";
-        palavras[3][0].nome_audio_menina = "";
-
-
-        palavras[3][1].palavra = "BLU _ A";
-        palavras[3][1].letra_correta = "S";
-        palavras[3][1].opcao1 = "Z";
-        palavras[3][1].palavra_completa = "BLUSA"; // Essa blusa é sua?
-        palavras[3][1].nivel = 4;
-        palavras[3][1].nome_audio_menino = "";
-        palavras[3][1].nome_audio_menina = "";
-
-        palavras[3][2].palavra = "DO _ E";
-        palavras[3][2].letra_correta = "Z";
-        palavras[3][2].opcao1 = "S";
-        palavras[3][2].palavra_completa = "DOZE"; // Você vai fazer doze anos amanhã?
-        palavras[3][2].nivel = 4;
-        palavras[3][2].nome_audio_menino = "";
-        palavras[3][2].nome_audio_menina = "";
-
-        palavras[3][3].palavra = "DU _ ENTOS";
-        palavras[3][3].letra_correta = "Z";
-        palavras[3][3].opcao1 = "S";
-        palavras[3][3].palavra_completa = "DUZENTOS"; //Eu quero duzentos balões para a festa.
-        palavras[3][3].nivel = 4;
-        palavras[3][3].nome_audio_menino = "";
-        palavras[3][3].nome_audio_menina = "";
-
-        palavras[3][4].palavra = "A _ A";
-        palavras[3][4].letra_correta = "S";
-        palavras[3][4].opcao1 = "Z";
-        palavras[3][4].palavra_completa = "ASA"; //A asa do passarinho quebrou!
-        palavras[3][4].nivel = 4;
-        palavras[3][4].nome_audio_menino = "";
-        palavras[3][4].nome_audio_menina = "";
-
-        palavras[3][5].palavra = "RO _ A";
-        palavras[3][5].letra_correta = "S";
-        palavras[3][5].opcao1 = "Z";
-        palavras[3][5].palavra_completa = "ROSA"; //Vamos colocar a rosa no lugar dela.
-        palavras[3][5].nivel = 4;
-        palavras[3][5].nome_audio_menino = "";
-        palavras[3][5].nome_audio_menina = "";
-
-        palavras[3][6].palavra = "LOU _ A";
-        palavras[3][6].letra_correta = "S";
-        palavras[3][6].opcao1 = "Z";
-        palavras[3][6].palavra_completa = "LOUSA"; //A lousa é branca?
-        palavras[3][6].nivel = 4;
-        palavras[3][6].nome_audio_menino = "";
-        palavras[3][6].nome_audio_menina = "";
-
-        palavras[3][7].palavra = "A _ OPRAR";
-        palavras[3][7].letra_correta = "SS";
-        palavras[3][7].opcao1 = "Ç";
-        palavras[3][7].palavra_completa = "ASSOPRAR"; //Eu vou assoprar a sua casinha de palha! 10%
-        palavras[3][7].nivel = 4;
-        palavras[3][7].nome_audio_menino = "";
-        palavras[3][7].nome_audio_menina = "";
-
-        palavras[3][8].palavra = "ÁLCOO _";
-        palavras[3][8].letra_correta = "L";
-        palavras[3][8].opcao1 = "U";
-        palavras[3][8].palavra_completa = "ÁLCOOL"; //Que cheiro do álcool ruim! 10%
-        palavras[3][8].nivel = 4;
-        palavras[3][8].nome_audio_menino = "";
-        palavras[3][8].nome_audio_menina = "";
-
-        palavras[3][9].palavra = "PÁ _ INA";
-        palavras[3][9].letra_correta = "G";
-        palavras[3][9].opcao1 = "J";
-        palavras[3][9].palavra_completa = "PÁGINA"; //Essa página está rasgada. 10%
-        palavras[3][9].nivel = 4;
-        palavras[3][9].nome_audio_menino = "";
-        palavras[3][9].nome_audio_menina = "";
-*/
 
 		for (int i = 0; i < maxLevel; ++i)
           {
 
-			for (int j = 0; j < numWordsLevel1; ++j) dataservice._connection.Insert(palavras[i][j]);
+			for (int j = 0; j < numWordsLevel1; ++j) _connection.Insert(palavras[i][j]);
 
 
           }
@@ -735,6 +482,37 @@ public class bancoPalavras
 
 public class comandosBasicos : MonoBehaviour {
 
+	void Start(){
+		// Conexão com o banco de dados grapphia!
+		var filepath = string.Format("{0}/{1}", Application.persistentDataPath, "grapphia");
+
+
+
+		if (!File.Exists(filepath))
+		{
+
+			var loadDb = new WWW("jar:file://" + Application.dataPath + "!/assets/" + "grapphia");  
+
+			while (!loadDb.isDone) { }  
+
+
+			File.WriteAllBytes(filepath, loadDb.bytes);
+
+
+
+		}
+
+		var dbPath = filepath;
+
+		bancoPalavras.Instance._connection = new SQLiteConnection(dbPath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
+
+
+	     Debug.Log("Final PATH: " + dbPath);
+		//Criando tabela usuário e tabela opção!
+		bancoPalavras.Instance._connection.CreateTable<user>();
+		bancoPalavras.Instance._connection.CreateTable<palavraOpcao>();
+		bancoPalavras.Instance._connection.CreateTable<palavraAcertoUser>();
+	}
 
     // Carregar cena!
     public void loadScene(string nameScene)
@@ -761,7 +539,7 @@ public class comandosBasicos : MonoBehaviour {
     {
 
         dadosJogo.Instance.currentPesonagem = 1;
-        Application.LoadLevel(nameScene);
+		SceneManager.LoadScene(nameScene);
 
 
     }
@@ -863,7 +641,8 @@ public class dadosJogo
     public void salvar_dados()
     {
         bancoPalavras.Instance.salvar_palavrasAcertoUser();
-        bancoPalavras.Instance.dataservice._connection.Update(currentUser);
+        bancoPalavras.Instance._connection.Update(currentUser);
+
     }
 
 }

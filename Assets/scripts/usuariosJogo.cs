@@ -8,20 +8,22 @@ using SQLite4Unity3d;
 using UnityEngine.SceneManagement;
 
 
-public class DataService      // Classe de serviço do banco de dados!
+public class DataService       // Classe de serviço do banco de dados!
 {
 
     public SQLiteConnection _connection; // Criando conexão com SQLite!
 
-	void Awake(){
-		DataService data = new DataService("grapphia");
+	public DataService(SQLiteConnection connection){
+		_connection = connection;
 	}
+		
 
     // Inicializando classe DataService!
-    public DataService(string dbName)
+    public void EstabeleceConexao(string dbName)
     {
 
         var filepath = string.Format("{0}/{1}", Application.persistentDataPath, dbName);
+
 
 
         if (!File.Exists(filepath))
@@ -61,7 +63,7 @@ public class DataService      // Classe de serviço do banco de dados!
             Nivel = nivel,
 			scoreDitado = scoreDitado,
         };
-       _connection.Insert(p);
+        _connection.Insert(p);
         return p;
     }
 
@@ -81,6 +83,7 @@ public class DataService      // Classe de serviço do banco de dados!
         };
         _connection.Delete(u);
     }
+		
 }
 
 
@@ -111,7 +114,7 @@ public class usuariosJogo : MonoBehaviour {
     // Classe de controle dos usuários!
     public Dropdown Users;
 
-    public DataService data;
+	public SQLiteConnection _connection;
 
     public GameObject somOn;
     public GameObject somOff;
@@ -119,13 +122,40 @@ public class usuariosJogo : MonoBehaviour {
     // Inicialização da tela usuariosJogo!
     void Start () {
 
-        data = new DataService("grapphia");
-        IEnumerable<user> users = data._connection.Table<user>(); 
+		var filepath = string.Format("{0}/{1}", Application.persistentDataPath, "grapphia");
 
 
-        var words = data._connection.Table<palavraAcertoUser>();
 
-        var words2 = data._connection.Table<palavraOpcao>();
+		if (!File.Exists(filepath))
+		{
+
+			var loadDb = new WWW("jar:file://" + Application.dataPath + "!/assets/" + "grapphia");  
+
+			while (!loadDb.isDone) { }  
+
+
+			File.WriteAllBytes(filepath, loadDb.bytes);
+
+
+
+		}
+
+		var dbPath = filepath;
+
+		_connection = new SQLiteConnection(dbPath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
+
+		Debug.Log("Final PATH: " + dbPath);
+		//Criando tabela usuário e tabela opção!
+		_connection.CreateTable<user>();
+		_connection.CreateTable<palavraOpcao>();
+		_connection.CreateTable<palavraAcertoUser>();
+
+        IEnumerable<user> users = _connection.Table<user>(); 
+
+
+        var words = _connection.Table<palavraAcertoUser>();
+
+        var words2 = _connection.Table<palavraOpcao>();
 
         int index = 0;
 
@@ -145,8 +175,10 @@ public class usuariosJogo : MonoBehaviour {
     // função para remover usuários!
     public void removeUser()
     {
+		DataService data = new DataService(_connection);
+	   //data.EstabeleceConexao ("grapphia");
 
-       var users = data._connection.Table<user>().Where(x => x.Name == Users.captionText.text);
+       var users = _connection.Table<user>().Where(x => x.Name == Users.captionText.text);
 
         
         foreach (var user in users)
@@ -165,12 +197,14 @@ public class usuariosJogo : MonoBehaviour {
     // Função ir para próxima tela!
     public void next()
     {
+		//DataService data = new DataService();
+		//data.EstabeleceConexao ("grapphia");
 
         if (Users.captionText.text == "") return;
         else
         {
 
-            var users = data._connection.Table<user>().Where(x => x.Name == Users.captionText.text);
+            var users = _connection.Table<user>().Where(x => x.Name == Users.captionText.text);
 
 
             foreach(var user in users)
