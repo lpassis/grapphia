@@ -21,11 +21,17 @@ public class ditado : MonoBehaviour
 
 	private int posicao;
 
+	public Text quantidadePalavrasApresentadas;
+
+	public GameObject orientacaoInicial;
+
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Inicializa a tela do jogo!
 	void Start ()
 	{
+		orientacaoInicial.SetActive (true);
+
 		Debug.Log (qtd_Palavras_Ditado);
 		posicao = Random.Range (0, qtd_Palavras_Ditado);
 		idPalavra = bancoPalavras.Instance.ListaIdPalavraAcerto[posicao];
@@ -51,6 +57,10 @@ public class ditado : MonoBehaviour
 			textoDigitado.text = "";
 		}
 
+		int quantidadePalavrasAtual = bancoPalavras.Instance.numWordsDitado - 1;
+		quantidadePalavrasApresentadas.text = quantidadePalavrasAtual.ToString();
+		quantidadePalavrasAtual--;
+
 		bancoPalavras.Instance.numWordsDitado--;
 		StartCoroutine ("Start");
 
@@ -67,6 +77,8 @@ public class ditado : MonoBehaviour
 
 	//Função criada por Magno
 	public void pressedAudioPalavra (){
+		orientacaoInicial.SetActive (false);
+
 		animacaoProfessora.SetActive (true);
 		StartCoroutine ("audioEnd");
 		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].nome_audio_ditado;
