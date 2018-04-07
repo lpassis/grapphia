@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class orientacoesDitado : MonoBehaviour {
+public class ditadoOrientacoes : MonoBehaviour {
 	public AudioClip sound;
 
 	// Use this for initialization
@@ -15,5 +15,4 @@ public class orientacoesDitado : MonoBehaviour {
 		yield return new WaitForSeconds (sound.length);
 		SceneManager.LoadScene ("telaDitado");
 	}
-
 }
