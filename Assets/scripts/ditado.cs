@@ -25,12 +25,19 @@ public class ditado : MonoBehaviour
 
 	public GameObject orientacaoInicial;
 
+	private bool mensagemInicial_Aplicada = false;
+
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Inicializa a tela do jogo!
 	void Start ()
 	{
-		orientacaoInicial.SetActive (true);
+		//Desativar o aparecimento constante da mensagem de orientação
+		if (mensagemInicial_Aplicada == false) {
+			orientacaoInicial.SetActive (true);
+		} else {
+			orientacaoInicial.SetActive (false);
+		}
 
 		Debug.Log (qtd_Palavras_Ditado);
 		posicao = Random.Range (0, qtd_Palavras_Ditado);
@@ -78,6 +85,7 @@ public class ditado : MonoBehaviour
 	//Função criada por Magno
 	public void pressedAudioPalavra (){
 		orientacaoInicial.SetActive (false);
+		mensagemInicial_Aplicada = true;
 
 		animacaoProfessora.SetActive (true);
 		StartCoroutine ("audioEnd");
