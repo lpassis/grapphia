@@ -4,6 +4,10 @@ using System.Collections;
 using System.IO;
 using SQLite4Unity3d;
 using UnityEngine.SceneManagement;
+using Firebase;
+using Firebase.Auth;
+using Firebase.Unity.Editor;
+using Firebase.Database;
 
 public class createUser : MonoBehaviour {
 
@@ -13,6 +17,10 @@ public class createUser : MonoBehaviour {
     public GameObject somOn; // Opção ativar e desativar som!
     public GameObject somOff;
 	public SQLiteConnection _connection;
+
+	Firebase.Auth.FirebaseAuth auth;
+	Firebase.Auth.FirebaseUser fb_user;
+	DatabaseReference reference;
 
 	public void Start(){
 		// Conexão com o banco de dados grapphia!
@@ -37,43 +45,103 @@ public class createUser : MonoBehaviour {
 		_connection.CreateTable<user>();
 		_connection.CreateTable<palavraOpcao>();
 		_connection.CreateTable<palavraAcertoUser>();
+
+		//Tabela keyPhone criada para gerar uma chave aleatoria no FireBase
+		_connection.CreateTable<keyPhone>();
+
+		InitializeFirebase ();
+
+		if(bancoPalavras.Instance.total_palavras < 1 ){
+
+			string key = reference.Child("users").Push().Key;
+
+			var k = new keyPhone{
+				keyFireBase = key,
+			};
+
+			_connection.Insert(k);
+		}
+	}
+
+	public string getKey(){
+		var key = _connection.Table<keyPhone> ().FirstOrDefault().keyFireBase;
+		return key;
+	}
+
+	void InitializeFirebase() {
+		auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+		auth.StateChanged += AuthStateChanged;
+		AuthStateChanged(this, null);
+		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://grapphia.firebaseio.com/");
+		reference = FirebaseDatabase.DefaultInstance.RootReference;
+	}
+
+	void AuthStateChanged(object sender, System.EventArgs eventArgs) {
+		if (auth.CurrentUser != fb_user) {
+			bool signedIn = fb_user != auth.CurrentUser && auth.CurrentUser != null;
+			if (!signedIn && fb_user != null) {
+				Debug.Log("Signed out " + fb_user.UserId);
+			}
+			fb_user = auth.CurrentUser;
+			if (signedIn) {
+				Debug.Log("Signed in " + fb_user.UserId);
+			}
+		}
 	}
 
     // Função para criar usuário!
     public void create()
     {
-        if (nome.text == "") return;
+		if (nome.text == "") return;
 
 		var users = _connection.Table<user>().Where(x => x.Name == nome.text);
 
-		if (users.Count () >= 1) {;
-			SceneManager.LoadScene ("telaUsuarioCadastrado");
-			return;
-		};
-
 		DataService data = new DataService(_connection);
-        data.CreateUser(nome.text, 0,0,0);
-	
-		users = null;
 
-        users = data._connection.Table<user>().Where(x => x.Name == nome.text);
-   
-        // Pega o usuário que ta sendo criado e seta como usuário que esta jogando!
-        foreach (var user in users)
-        {
+		//string password = "12345678";
+		//string email = nome.text + "@grapphia.com";
 
-            dadosJogo.Instance.currentUser = new user
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Score = user.Score,
-                Nivel = user.Nivel,
-				scoreDitado = user.scoreDitado,
-            };
+		auth.SignInAnonymouslyAsync().ContinueWith(task => {
+			if (task.IsCanceled) {
+				Debug.LogError("SignInAnonymouslyAsync was canceled.");
+				return;
+			}
+			if (task.IsFaulted) {
+				Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
+				return;
+			}
+			if (users.Count () >= 1 ) {;
+				SceneManager.LoadScene ("telaUsuarioCadastrado");
+				return;
+			}
+			Firebase.Auth.FirebaseUser newUser = task.Result;
+			Debug.LogFormat("User signed in successfully: {0} ({1})",
+				newUser.DisplayName, newUser.UserId);
 
-        }
+			reference.Child("admin/" + newUser.UserId + "/Date & Time").SetValueAsync(System.DateTime.UtcNow.ToString("HH:mm dd MMMM, yyyy"));
 
-		SceneManager.LoadScene ("telaEstante");
+			data.CreateUser(nome.text, 0,0,0, getKey());
+
+			users = null;
+
+			users = data._connection.Table<user>().Where(x => x.Name == nome.text);
+
+			// Pega o usuário que ta sendo criado e seta como usuário que esta jogando!
+			foreach (var user in users)
+			{
+				dadosJogo.Instance.currentUser = new user
+				{
+					Id = user.Id,
+					Name = user.Name,
+					Score = user.Score,
+					Nivel = user.Nivel,
+					scoreDitado = user.scoreDitado,
+					key = getKey(),
+				};
+			}
+			nome.text = null;
+			SceneManager.LoadScene ("telaEstante");
+		});
 
     }
 
@@ -98,5 +166,29 @@ public class createUser : MonoBehaviour {
 
     }
 
+	public void SignInemail(string email, string password){
+		//exists = true;
+		auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
+
+			if (task.IsCanceled) {
+				Debug.LogError("CreateUserWithEmailAndPasswordAsync was canceled.");
+
+				return;
+			}
+			if (task.IsFaulted) {
+				Debug.LogError("CreateUserWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+				Debug.Log("usuario cadastrado FB ");
+				SceneManager.LoadScene ("telaUsuarioCadastrado");
+				return ;
+			}
+
+			// Firebase user has been created.
+			Firebase.Auth.FirebaseUser newUser = task.Result;
+			Debug.LogFormat("Firebase user created successfully: {0} ({1})", newUser.DisplayName, newUser.UserId);
+
+
+		});
+
+	}
 
 }

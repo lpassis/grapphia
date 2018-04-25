@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "298529757861",
+    "firebase_url": "https://grapphia.firebaseio.com",
+    "project_id": "grapphia",
+    "storage_bucket": "grapphia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:298529757861:android:ca01d08bd585e2d2",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.Graphhia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "298529757861-u9tf1ud2ttjn71a6mcl7e91b2thmpec0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC26kSrqGhteoVqmzsHmXPiYxf9piThXys"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

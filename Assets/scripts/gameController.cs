@@ -7,6 +7,10 @@ using UnityEngine.SceneManagement;
 using System.IO;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using Firebase;
+using Firebase.Database;
+using Firebase.Unity.Editor;
+using Firebase.Auth;
 
 // Classe que controla todos os elementos gráficos do jogo!
 public class gameController : MonoBehaviour
@@ -145,6 +149,13 @@ public class gameController : MonoBehaviour
 	bool contadorAudio;
 	float aux;
 
+	DatabaseReference reference;
+	Firebase.Auth.FirebaseAuth auth;
+	Firebase.Auth.FirebaseUser user_fb;
+	string uid;
+
+	string pathToFireBaseUser;
+
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Inicializa a tela do jogo!
@@ -212,6 +223,8 @@ public class gameController : MonoBehaviour
 		randNum_blocos = Random.Range (1.0f, 2.0f); // Ordem aleatória de entrada dos blocos com as letras 
 
 		this.setPalavra (dadosJogo.Instance.currentUser.Nivel);
+
+		InitializeFireBase ();
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -519,7 +532,13 @@ public class gameController : MonoBehaviour
 	}
 
 
-
+	void InitializeFireBase(){
+		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl ("https://grapphia.firebaseio.com/");
+		reference= FirebaseDatabase.DefaultInstance.RootReference;
+		auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+		user_fb = auth.CurrentUser;
+		//uid = user_fb.UserId;
+	}
 	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -527,6 +546,10 @@ public class gameController : MonoBehaviour
 	// Quando pressiona a caixa 1!
 	public void pressedButtonLetter1 ()
 	{
+		pathToFireBaseUser = dadosJogo.Instance.currentUser.key + "/"+ dadosJogo.Instance.currentUser.Name;
+		//pathToFireBaseUser = dadosJogo.Instance.currentUser.key + "/" + uid +"/"+ dadosJogo.Instance.currentUser.Name;
+		//string uid = user_fb.UserId;
+
 		horse.GetComponent<AudioSource> ().Pause ();
 		horse.GetComponent<AudioSource> ().time = 0.0f;
 		horse2.GetComponent<AudioSource> ().Pause ();
@@ -539,7 +562,7 @@ public class gameController : MonoBehaviour
 		int auxIdpalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id - 1;
 
 		if (yboard_letter >= -1.7f &&
-		    txtBoardLetter.text == bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].letra_correta) {
+			txtBoardLetter.text == bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].letra_correta) {
 
 			respondido = true;
 
@@ -550,8 +573,17 @@ public class gameController : MonoBehaviour
 				cowgirl_moving_rope.SetActive (false);
 				cowgirl_lacando1.SetActive (true);
 			}
+			Debug.Log ("acertou.... hahaha");
+			Debug.Log ("auxidpalavra" + auxIdpalavra);
 
-			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != true) {   //verificando se palavra já foi respondida corretamente!
+			Debug.Log ("LU:" + bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id);
+
+			++dadosJogo.Instance.currentUser.Score;
+			//++bancoPalavras.Instance.acertos;
+			calcula_porcentagem_casa ();
+			reference.Child ("users/" + pathToFireBaseUser + "/Score").SetValueAsync (dadosJogo.Instance.currentUser.Score);
+
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id == -1) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
 					idPalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id,
@@ -561,16 +593,17 @@ public class gameController : MonoBehaviour
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
-				++dadosJogo.Instance.currentUser.Score;
-				++bancoPalavras.Instance.acertos;
-				calcula_porcentagem_casa ();
-				Debug.Log ("Acertos: " + bancoPalavras.Instance.acertos);
+
+			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == false) {
+				bancoPalavras.Instance.palavrasAcerto[auxIdpalavra].acerto= true;
+				//nao está incremetando o currentUser.Score
 			}
 
 			message_hit.SetActive (true);
 			sound_won.GetComponent<AudioSource> ().Play ();
 			txtBoardWord.text = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
 			Score.text = "ACERTOS: " + dadosJogo.Instance.currentUser.Score; 
+
 		} else if (yboard_letter >= -1.7f) {
 
 			respondido = true;
@@ -583,9 +616,12 @@ public class gameController : MonoBehaviour
 				cowgirl_moving_rope.SetActive (false);
 				cowgirl_lacando1.SetActive (true);
 			}
+			Debug.Log ("ERROU.... hahaha");
+			Debug.Log ("auxidpalavra" + auxIdpalavra);
 
+			Debug.Log ("LU:" +bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id);
 
-			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != false) {
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id == -1) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
 					idPalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id,
@@ -595,20 +631,27 @@ public class gameController : MonoBehaviour
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
+				reference.Child("users/" + pathToFireBaseUser + "/Erros").SetValueAsync(bancoPalavras.Instance.qtd_WordsPresented - dadosJogo.Instance.currentUser.Score);
+			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == true) {
+				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto = false;
 			}
 
+			Debug.Log ("ERROR: " + bancoPalavras.Instance.qtd_WordsPresented + " - " + dadosJogo.Instance.currentUser.Score);
 			sound_lost.GetComponent<AudioSource> ().Play ();
 
 			txtBoardWord.text = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
 
 			//++dadosJogo.Instance.erros[dadosJogo.Instance.currentUser.Nivel];
-
 		}
 	}
 
 	// Quando pressiona a caixa 2!
 	public void pressedButtonLetter2 ()
 	{
+		pathToFireBaseUser = dadosJogo.Instance.currentUser.key + "/"+ dadosJogo.Instance.currentUser.Name;
+		//pathToFireBaseUser = dadosJogo.Instance.currentUser.key + "/" + uid +"/"+ dadosJogo.Instance.currentUser.Name;
+		//string uid = user_fb.UserId;
+
 		horse.GetComponent<AudioSource> ().Pause ();
 		horse.GetComponent<AudioSource> ().time = 0.0f;
 		horse2.GetComponent<AudioSource> ().Pause ();
@@ -621,7 +664,7 @@ public class gameController : MonoBehaviour
 		int auxIdpalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id - 1;
 
 		if (yboard2_letter >= -1.7f
-		    && txtBoardLetter2.text == bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].letra_correta) {
+			&& txtBoardLetter2.text == bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].letra_correta) {
 
 			respondido = true;
 
@@ -633,7 +676,12 @@ public class gameController : MonoBehaviour
 				cowgirl_lacando2.SetActive (true);
 			}
 
-			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != true) {
+			++dadosJogo.Instance.currentUser.Score;
+			//++bancoPalavras.Instance.acertos;
+			calcula_porcentagem_casa ();
+			reference.Child ("users/" + pathToFireBaseUser + "/Score").SetValueAsync (dadosJogo.Instance.currentUser.Score);
+
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id == -1) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
 					idPalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id,
@@ -643,18 +691,18 @@ public class gameController : MonoBehaviour
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
-				++dadosJogo.Instance.currentUser.Score;
-				++bancoPalavras.Instance.acertos;
-				calcula_porcentagem_casa ();
-				Debug.Log ("Acertos: " + bancoPalavras.Instance.acertos);
-			}
 
+			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == false) {
+				bancoPalavras.Instance.palavrasAcerto[auxIdpalavra].acerto= true;
+				//nao está incremetando o currentUser.Score
+			}
+			//}
 
 			message_hit.SetActive (true);
 			sound_won.GetComponent<AudioSource> ().Play ();
 			txtBoardWord.text = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
-
 			Score.text = "ACERTOS: " + dadosJogo.Instance.currentUser.Score;
+
 		} else if (yboard2_letter >= -1.7f) {
 			horse.GetComponent<AudioSource> ().Pause ();
 			respondido = true;
@@ -667,8 +715,13 @@ public class gameController : MonoBehaviour
 				cowgirl_moving_rope.SetActive (false);
 				cowgirl_lacando2.SetActive (true);
 			}
+			//entender if
+			Debug.Log ("ERROU.... hahaha");
+			Debug.Log ("auxidpalavra" + auxIdpalavra);
 
-			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != false) {
+			Debug.Log ("LU:" +bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id);
+
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id == -1) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
 					idPalavra = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].Id,
@@ -678,8 +731,15 @@ public class gameController : MonoBehaviour
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
+				reference.Child("users/" + pathToFireBaseUser + "/Erros").SetValueAsync(bancoPalavras.Instance.qtd_WordsPresented - dadosJogo.Instance.currentUser.Score);
+
+			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == true) {
+				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto = false;
 			}
 
+			//criar tabela para falar quantas vezes errou
+			Debug.Log ("ERROR: " + bancoPalavras.Instance.qtd_WordsPresented + " - " + dadosJogo.Instance.currentUser.Score);
+			//reference.Child("users/" + pathToFireBaseUser + "/Erros").SetValueAsync(bancoPalavras.Instance.qtd_WordsPresented - dadosJogo.Instance.currentUser.Score);
 			sound_lost.GetComponent<AudioSource> ().Play ();
 			txtBoardWord.text = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
 

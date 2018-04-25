@@ -3,6 +3,9 @@ using UnityEngine.UI;
 using System.IO;
 using SQLite4Unity3d;
 using System.Collections;
+using Firebase;
+using Firebase.Unity.Editor;
+using Firebase.Auth;
 
 //Classe da tela inicial!
 public class telaInicial : MonoBehaviour {
@@ -14,8 +17,7 @@ public class telaInicial : MonoBehaviour {
 		
 		// Conexão com o banco de dados grapphia!
 		var filepath = string.Format("{0}/{1}", Application.persistentDataPath, "grapphia");
-
-
+		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://grapphia.firebaseio.com/");
 
 		if (!File.Exists(filepath))
 		{

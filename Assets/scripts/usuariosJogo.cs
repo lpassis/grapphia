@@ -6,6 +6,10 @@ using System.IO;
 using System;
 using SQLite4Unity3d;
 using UnityEngine.SceneManagement;
+using Firebase;
+using Firebase.Database;
+using Firebase.Unity.Editor;
+using Firebase.Auth;
 
 
 public class DataService       // Classe de serviço do banco de dados!
@@ -54,16 +58,38 @@ public class DataService       // Classe de serviço do banco de dados!
 
 	//Tabela alterada por Magno
     // Inserindo usuário no banco de dados!
-	public user CreateUser(string newUser, int score, int nivel, int scoreDitado)
+	public user CreateUser(string newUser, int score, int nivel, int scoreDitado, string keyFireBase)
     {
+		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://grapphia.firebaseio.com/");
+		DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+
+		Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+		Firebase.Auth.FirebaseUser user_fb = auth.CurrentUser;
+
         var p = new user
         {
             Name = newUser,
             Score = score,
             Nivel = nivel,
 			scoreDitado = scoreDitado,
+			key = keyFireBase,
         };
-        _connection.Insert(p);
+		string uid = user_fb.UserId; //UID gerado pelo FireBase.Auth
+		//string path = keyFireBase + "/" + uid + "/" + p.Name;
+
+		string path = keyFireBase + "/" + p.Name;
+		//writeNewUser (p.Name,p.Score,p.Nivel,p.scoreDitado,p.key, path);
+
+		//reference.Child("users").Child(path + "/Nome").SetValueAsync(p.Name).IsCompleted += g();
+
+		reference.Child("users").Child(path + "/Nome").SetValueAsync(p.Name);
+		reference.Child("users").Child(path + "/Score").SetValueAsync(p.Score);
+		reference.Child("users").Child(path + "/Nivel").SetValueAsync(p.Nivel);
+		reference.Child("users").Child(path + "/Score Ditado").SetValueAsync(p.scoreDitado);
+		reference.Child("users").Child(path + "/FireBase UID").SetValueAsync(uid);
+		reference.Child("users").Child(path + "/Date & Time").SetValueAsync(System.DateTime.UtcNow.ToString("HH:mm dd MMMM, yyyy"));
+        
+		_connection.Insert(p);
         return p;
     }
 
@@ -100,6 +126,8 @@ public class user
     public int Nivel { get; set; }
 
 	public int scoreDitado { get; set; }
+
+	public string key { get; set; }
     
 	public override string ToString()
     {
@@ -119,12 +147,16 @@ public class usuariosJogo : MonoBehaviour {
     public GameObject somOn;
     public GameObject somOff;
 
+	DatabaseReference reference;
+	Firebase.Auth.FirebaseAuth auth;
+	Firebase.Auth.FirebaseUser user_fb;
+
     // Inicialização da tela usuariosJogo!
     void Start () {
 
+		InitializeFirebase ();
+
 		var filepath = string.Format("{0}/{1}", Application.persistentDataPath, "grapphia");
-
-
 
 		if (!File.Exists(filepath))
 		{
@@ -172,19 +204,26 @@ public class usuariosJogo : MonoBehaviour {
         Debug.Log("Palavras User: " + words.Count() + " opções:" + words2.Count() + " Users: " +index);
     }
 
+	void InitializeFirebase() {
+		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://grapphia.firebaseio.com/");
+		reference = FirebaseDatabase.DefaultInstance.RootReference;
+		auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+		user_fb = auth.CurrentUser;
+	}
     // função para remover usuários!
     public void removeUser()
     {
 		DataService data = new DataService(_connection);
 	   //data.EstabeleceConexao ("grapphia");
 
-       var users = _connection.Table<user>().Where(x => x.Name == Users.captionText.text);
-
+       	var users = _connection.Table<user>().Where(x => x.Name == Users.captionText.text);
+		var key = bancoPalavras.Instance._connection.Table<keyPhone> ().FirstOrDefault().keyFireBase;
         
         foreach (var user in users)
         {
 
             data.removeUser(user.Id);
+			reference.Child ("users/" + key).Child ("/"+user.Name).RemoveValueAsync();
 
         }
             Users.options.RemoveAt(Users.value);
@@ -200,30 +239,48 @@ public class usuariosJogo : MonoBehaviour {
 		//DataService data = new DataService();
 		//data.EstabeleceConexao ("grapphia");
 
-        if (Users.captionText.text == "") return;
-        else
-        {
+		if (Users.captionText.text == "") return;
+		else
+		{
+			auth.SignInAnonymouslyAsync().ContinueWith(task => {
+				if (task.IsCanceled) {
+					Debug.LogError("SignInAnonymouslyAsync was canceled.");
+					return;
+				}
+				if (task.IsFaulted) {
+					Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
+					return;
+				}
 
-            var users = _connection.Table<user>().Where(x => x.Name == Users.captionText.text);
+				Firebase.Auth.FirebaseUser newUser = task.Result;
+				Debug.LogFormat("User signed in successfully: {0} ({1})",
+					newUser.DisplayName, newUser.UserId);
 
+				var users = _connection.Table<user>().Where(x => x.Name == Users.captionText.text);
 
-            foreach(var user in users)
-            {
+				reference.Child("admin/" + newUser.UserId + "/Date & Time").SetValueAsync(System.DateTime.UtcNow.ToString("HH:mm dd MMMM, yyyy"));
 
-                dadosJogo.Instance.currentUser = new user
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Score = user.Score,
-                    Nivel = user.Nivel,
-					scoreDitado = user.scoreDitado,
-                };
+				foreach(var user in users)
+				{
 
-            }
+					dadosJogo.Instance.currentUser = new user
+					{
+						Id = user.Id,
+						Name = user.Name,
+						Score = user.Score,
+						Nivel = user.Nivel,
+						scoreDitado = user.scoreDitado,
+						key = user.key,
+					};
 
-            SceneManager.LoadScene ("TelaEstante");
+				}
 
-        }
+				reference.Child("users").Child(dadosJogo.Instance.currentUser.key + "/" + dadosJogo.Instance.currentUser.Name + "/FireBase UID").SetValueAsync(newUser.UserId);
+				SceneManager.LoadScene ("TelaEstante");
+
+			});
+
+		}
 
 
     }

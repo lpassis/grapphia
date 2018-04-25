@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using SQLite4Unity3d;
 using UnityEngine.SceneManagement;
+using Firebase;
+using Firebase.Auth;
+using Firebase.Unity.Editor;
+using Firebase.Database;
 
 
 // Classe Singleton onde armazena as palavras!
@@ -117,11 +121,22 @@ public class bancoPalavras
 
         acertos = resul2.Count();
 
+		palavrasAcerto = new palavraAcertoUser[(32*aux)];
+		for (int i = 0; i < palavrasAcerto.Length; i++) {
+			palavrasAcerto [i] = new palavraAcertoUser(){
+				Id = -1,
+				idPalavra = -1,
+				idUser = -1,
+				acerto = false,
+				nivelPalavra = -1
+			};
+		}
+
         if (resul2.Count() > 0)
         {
-            palavrasAcerto = new palavraAcertoUser[(32*aux)];
+            //palavrasAcerto = new palavraAcertoUser[(32*aux)];
 
-            for (int j = 0; j < (32 * aux); ++j) palavrasAcerto[j] = new palavraAcertoUser();
+            //for (int j = 0; j < (32 * aux); ++j) palavrasAcerto[j] = new palavraAcertoUser();
             
 			foreach (var p in resul2)
             {
@@ -137,26 +152,52 @@ public class bancoPalavras
 				ListaIdPalavraAcerto.Add(p.idPalavra-1);
             }
         }
-        else
+        /*else
         {
             palavrasAcerto = new palavraAcertoUser[(32*aux)];
             for (int j = 0; j < (32*aux); ++j)
             {
                 palavrasAcerto[j] = new palavraAcertoUser();
             }
-        }
+        }*/
 
     }
 
     public void salvar_palavrasAcertoUser()
     {
+		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://grapphia.firebaseio.com/");
+		DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+
+		Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+		Firebase.Auth.FirebaseUser user_fb = auth.CurrentUser;
+
+		var key = bancoPalavras.Instance._connection.Table<keyPhone> ().FirstOrDefault().keyFireBase;
+
+		//var nomeCurrentUser = _connection.Table<user>().Where(x => x.Id == dadosJogo.Instance.currentUser.Id);
+
+		string uid = user_fb.UserId;
+		//string pathFireBase = "palavrasAcertoUser/" + key + "/" + uid + "/" + dadosJogo.Instance.currentUser.Name + "/";
+
+		string pathFireBase = "palavrasAcertoUser/" + key + "/" + dadosJogo.Instance.currentUser.Name + "/";
+
         for(int i=0; i<palavrasAcerto.Length; ++i)
         {
-            if (palavrasAcerto[i].idPalavra > 0 && palavrasAcerto[i].Id > 0)
-            {
-               _connection.Update(palavrasAcerto[i]);
-            }
-            else if (palavrasAcerto[i].idPalavra > 0) _connection.Insert(palavrasAcerto[i]);
+			if (palavrasAcerto [i].idPalavra > 0 && palavrasAcerto [i].Id > 0) {
+				_connection.Update (palavrasAcerto [i]);
+				reference.Child (pathFireBase + palavrasAcerto [i].Id + "/idPalavra").SetValueAsync (palavrasAcerto [i].idPalavra);
+				reference.Child (pathFireBase + palavrasAcerto [i].Id + "/acerto").SetValueAsync (palavrasAcerto [i].acerto);
+				reference.Child (pathFireBase + palavrasAcerto [i].Id + "/nivelpalavra").SetValueAsync (palavrasAcerto [i].nivelPalavra);
+				reference.Child (pathFireBase + palavrasAcerto [i].Id + "/Nome").SetValueAsync (dadosJogo.Instance.currentUser.Name);
+				reference.Child (pathFireBase + palavrasAcerto [i].Id + "/FireBase UID").SetValueAsync (uid);
+			} else if (palavrasAcerto [i].idPalavra > 0) {
+				_connection.Insert (palavrasAcerto [i]);
+
+				reference.Child(pathFireBase + palavrasAcerto[i].Id + "/idPalavra").SetValueAsync(palavrasAcerto[i].idPalavra);
+				reference.Child(pathFireBase + palavrasAcerto[i].Id + "/acerto").SetValueAsync(palavrasAcerto[i].acerto);
+				reference.Child(pathFireBase + palavrasAcerto[i].Id + "/nivelpalavra").SetValueAsync(palavrasAcerto[i].nivelPalavra);
+				reference.Child(pathFireBase + palavrasAcerto[i].Id + "/Nome").SetValueAsync(dadosJogo.Instance.currentUser.Name);
+				reference.Child(pathFireBase + palavrasAcerto[i].Id + "/FireBase UID").SetValueAsync(uid);
+			}
         }
 
     }
@@ -166,6 +207,7 @@ public class bancoPalavras
 
     {
 		int numWordsLevel1 = 32;
+		DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
 
 		palavras = new palavraOpcao[maxLevel][];
 
@@ -795,8 +837,17 @@ public class bancoPalavras
 		for (int i = 0; i < maxLevel; ++i)
           {
 
-			for (int j = 0; j < numWordsLevel1; ++j) _connection.Insert(palavras[i][j]);
+			for (int j = 0; j < numWordsLevel1; ++j) {
+				_connection.Insert (palavras [i] [j]);
 
+				reference.Child ("palavras").Child (palavras [i] [j].Id.ToString() + "/palavra").SetValueAsync (palavras [i] [j].palavra);
+				reference.Child ("palavras").Child (palavras [i] [j].Id.ToString() + "/letra_correta").SetValueAsync (palavras [i] [j].letra_correta);
+				reference.Child ("palavras").Child (palavras [i] [j].Id.ToString() + "/opcao1").SetValueAsync (palavras [i] [j].opcao1);
+				reference.Child ("palavras").Child (palavras [i] [j].Id.ToString() + "/palavra_completa").SetValueAsync (palavras [i] [j].palavra_completa);
+				reference.Child ("palavras").Child (palavras [i] [j].Id.ToString() + "/nivel").SetValueAsync (palavras [i] [j].nivel);
+				reference.Child ("palavras").Child (palavras [i] [j].Id.ToString() + "/nome_audio_menino").SetValueAsync (palavras [i] [j].nome_audio_menino);
+				reference.Child ("palavras").Child (palavras [i] [j].Id.ToString() + "/nome_audio_menina").SetValueAsync (palavras [i] [j].nome_audio_menina);
+			}
 
           }
 
@@ -840,6 +891,11 @@ public class comandosBasicos : MonoBehaviour {
 		bancoPalavras.Instance._connection.CreateTable<palavraAcertoUser>();
 	}
 
+	public string getKey(){
+		var key = bancoPalavras.Instance._connection.Table<keyPhone> ().FirstOrDefault().keyFireBase;
+		return key;
+	}
+
     // Carregar cena!
     public void loadScene(string nameScene)
     {
@@ -848,6 +904,10 @@ public class comandosBasicos : MonoBehaviour {
 		SceneManager.LoadScene (nameScene);
 
     }
+	public void loadScene_SignOut(string nameScene){
+		FirebaseAuth.DefaultInstance.SignOut();
+		SceneManager.LoadScene (nameScene);
+	}
 
     // Carregar a cena quando selecionar o cowboy!
     public void loadSceneBoy(string nameScene)
@@ -874,12 +934,13 @@ public class comandosBasicos : MonoBehaviour {
     public void exit()
     {
         dadosJogo.Instance.salvar_dados();
+		FirebaseAuth.DefaultInstance.SignOut();
         Application.Quit();
 
     }
     public void exitInicial()
     {
-        
+		FirebaseAuth.DefaultInstance.SignOut();
         Application.Quit();
 
     }
@@ -932,6 +993,13 @@ public class palavraAcertoUser
     public bool acerto { get; set; }
 
     public int nivelPalavra { get; set; }
+
+}
+
+public class keyPhone
+{
+	[PrimaryKey]
+	public string keyFireBase { get; set; }
 
 }
 
