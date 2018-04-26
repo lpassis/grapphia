@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:298529757861:android:ca01d08bd585e2d2",
+        "mobilesdk_app_id": "1:298529757861:android:a447582ded87f44f",
         "android_client_info": {
-          "package_name": "com.DefaultCompany.Graphhia"
+          "package_name": "com.DefaultCompany.Grapphia"
         }
       },
       "oauth_client": [

@@ -7,9 +7,9 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>298529757861-3o1h347368rohl0bn4f8rqo2mrq784r8.apps.googleusercontent.com</string>
+	<string>298529757861-qu7bhj1buuno61l84a60hcake96erier.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.298529757861-3o1h347368rohl0bn4f8rqo2mrq784r8</string>
+	<string>com.googleusercontent.apps.298529757861-qu7bhj1buuno61l84a60hcake96erier</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDJnFl2foA3Zi_1PQdVMahO4jbUbJ28FhM</string>
 	<key>GCM_SENDER_ID</key>
@@ -17,7 +17,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.Graphhia.ios</string>
+	<string>com.DefaultCompany.Grapphia</string>
 	<key>PROJECT_ID</key>
 	<string>grapphia</string>
 	<key>STORAGE_BUCKET</key>
@@ -33,7 +33,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:298529757861:ios:9ebe64ac8d55e549</string>
+	<string>1:298529757861:ios:a447582ded87f44f</string>
 	<key>DATABASE_URL</key>
 	<string>https://grapphia.firebaseio.com</string>
 </dict>
