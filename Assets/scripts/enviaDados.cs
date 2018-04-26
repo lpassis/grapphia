@@ -30,7 +30,7 @@ public class enviaDados : MonoBehaviour {
 		sw.WriteLine ("Acertos do Usuário: " + pontuacaoUsuarioAcerto);
 		sw.WriteLine ("Acertos do Usuário no Ditado: " + pontuacaoUsuarioAcertoDitado);
 		sw.WriteLine ("Palavras Acerto: ");
-		for (int i = 0; i < bancoPalavras.Instance.palavrasAcerto.Length; ++i) {
+		for(int i=0; i<bancoPalavras.Instance.palavrasAcerto.Length; ++i){
 			sw.WriteLine (bancoPalavras.Instance.palavrasAcerto[i].idPalavra + " - " + bancoPalavras.Instance.palavrasAcerto[i].acerto);
 		}
 		sw.Close ();
