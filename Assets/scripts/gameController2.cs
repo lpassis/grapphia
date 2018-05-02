@@ -12,15 +12,6 @@ using System.Security.Cryptography.X509Certificates;
 public class gameController2 : MonoBehaviour
 {
 
-	public GameObject cloud1;
-	// Referenciando as nuvens!
-	public GameObject cloud2;
-	public GameObject cloud3;
-
-	public GameObject bird1;
-	// Referenciando os pássaros
-	public GameObject bird2;
-
 	public GameObject horse;
 	// Referenciando os cavalos!
 	public GameObject horse2;
@@ -41,18 +32,12 @@ public class gameController2 : MonoBehaviour
 	// Rerefenciando sons de ganhou e perdeu!
 	public GameObject sound_lost;
 
-	public GameObject sound_on;
-	// Referenciando botão som ativado e desativado!
-	public GameObject sound_off;
-
 	public GameObject menu_pause;
 	// Referenciando botão pause!
 
-	public GameObject mensagem_inicial;
+	//public GameObject mensagem_inicial;
 
-	public GameObject mensagem_fim_jogo;
-
-	public GameObject mensagem_audio_frase;
+	//public GameObject mensagem_audio_frase;
 
 	public GameObject cowboy_lacando1;
 
@@ -73,7 +58,7 @@ public class gameController2 : MonoBehaviour
 	public Text Score;
 	// Referenciando acertos que mostra na tela!
 
-	public GameObject casa0;
+	/*public GameObject casa0;
 	public GameObject casa1;
 	public GameObject casa2;
 	public GameObject casa3;
@@ -82,7 +67,7 @@ public class gameController2 : MonoBehaviour
 	public GameObject casa6;
 	public GameObject casa7;
 	public GameObject casa8;
-	public GameObject casa9;
+	public GameObject casa9;*/
 
 
 	//Posições dos objetos!
@@ -94,12 +79,6 @@ public class gameController2 : MonoBehaviour
 
 	private float x3;
 	private float y3;
-
-	private float xBird1;
-	private float yBird1;
-
-	private float xBird2;
-	private float yBird2;
 
 	private float xHorse;
 	private float yHorse;
@@ -155,8 +134,8 @@ public class gameController2 : MonoBehaviour
 
 		if (ScoreInitial == 0) {
 
-			mensagem_inicial.SetActive (true);
-			mensagem_audio_frase.SetActive (true);
+			//mensagem_inicial.SetActive (true);
+			//mensagem_audio_frase.SetActive (true);
 
 		} else
 			verifica_porcentagem_casa ();
@@ -172,21 +151,6 @@ public class gameController2 : MonoBehaviour
 			cowgirl_moving_rope.SetActive (false);
 
 		// inicializando as posições dos objetos!
-		x1 = cloud1.transform.position.x;
-		y1 = cloud1.transform.position.y;
-
-		x2 = cloud2.transform.position.x;
-		y2 = cloud2.transform.position.y;
-
-		x3 = cloud3.transform.position.x;
-		y3 = cloud3.transform.position.y;
-
-		xBird1 = bird1.transform.position.x;
-		yBird1 = bird1.transform.position.y;
-
-		xBird2 = bird2.transform.position.x;
-		yBird2 = bird2.transform.position.y;
-
 		xHorseinitial = xHorse = horse.transform.position.x;
 		yHorseinitial = yHorse = horse.transform.position.y;
 
@@ -243,10 +207,6 @@ public class gameController2 : MonoBehaviour
 		if (x3 >= 9.52f)
 			x3 = -9.52f;
 
-		if (xBird1 <= -9.52f)
-			xBird1 = 16.52f;
-		if (xBird2 <= -9.52f)
-			xBird2 = 23.52f;
 		if (xHorse <= -9.52f) { 
 			horse.GetComponent<AudioSource> ().Pause ();
 			xHorse = 30f;
@@ -268,8 +228,6 @@ public class gameController2 : MonoBehaviour
 		x1 = x1 + 0.002f;
 		x2 = x2 + 0.002f;
 		x3 = x3 + 0.002f;
-		xBird1 -= 0.009f;
-		xBird2 -= 0.009f;
 		//xHorse -= 0.065f;
 		//xHorse2 -= 0.065f;
 		xHorse -= 0.100f;
@@ -359,11 +317,6 @@ public class gameController2 : MonoBehaviour
 		}
 
 		//Setando nos objetos!
-		cloud1.transform.position = new Vector2 (x1, y1);
-		cloud2.transform.position = new Vector2 (x2, y2);
-		cloud3.transform.position = new Vector2 (x3, y3);
-		bird1.transform.position = new Vector2 (xBird1, yBird1);
-		bird2.transform.position = new Vector2 (xBird2, yBird2);
 		horse.transform.position = new Vector2 (xHorse, yHorse);
 		horse2.transform.position = new Vector2 (xHorse2, yHorse2);
 		board_letter.transform.position = new Vector2 (xboard_letter, yboard_letter);
@@ -404,7 +357,7 @@ public class gameController2 : MonoBehaviour
 		double p = (double)dadosJogo.Instance.currentUser.Score;
 		Debug.Log ("p" + p);
 
-		if (p == 2.0) {
+		/*if (p == 2.0) {
 			casa8.SetActive (true);
 			casa8.GetComponent<AudioSource> ().Play ();
 		} else if (p == 4.0) {
@@ -434,7 +387,7 @@ public class gameController2 : MonoBehaviour
 		} else if (p == 15.0) {
 			casa1.SetActive (true);
 			casa8.GetComponent<AudioSource> ().Play ();
-		}
+		}*/
 	}
 
 
@@ -446,7 +399,7 @@ public class gameController2 : MonoBehaviour
 		double p = dadosJogo.Instance.currentUser.Score / (bancoPalavras.Instance.total_palavras / 10);
 		Debug.Log ("p" + p);
 
-		if (p >= 1.0 && p < 2.0) {
+		/*if (p >= 1.0 && p < 2.0) {
 			casa8.SetActive (true);
 		} else if (p >= 2.0 && p < 3.0) {
 
@@ -513,7 +466,7 @@ public class gameController2 : MonoBehaviour
 			casa2.SetActive (true);
 			casa0.SetActive (true);
 			casa1.SetActive (true);
-		}
+		}*/
 	}
 
 
@@ -529,8 +482,8 @@ public class gameController2 : MonoBehaviour
 		horse.GetComponent<AudioSource> ().time = 0.0f;
 		horse2.GetComponent<AudioSource> ().Pause ();
 		horse2.GetComponent<AudioSource> ().time = 0.0f;
-		mensagem_inicial.SetActive (false);
-		mensagem_audio_frase.SetActive (false);
+		//mensagem_inicial.SetActive (false);
+		//mensagem_audio_frase.SetActive (false);
 		//board2_letter.SetActive(false);
 		board2_letter.GetComponent<Button> ().enabled = false;
 
@@ -611,8 +564,8 @@ public class gameController2 : MonoBehaviour
 		horse.GetComponent<AudioSource> ().time = 0.0f;
 		horse2.GetComponent<AudioSource> ().Pause ();
 		horse2.GetComponent<AudioSource> ().time = 0.0f;
-		mensagem_inicial.SetActive (false);
-		mensagem_audio_frase.SetActive (false);
+		//mensagem_inicial.SetActive (false);
+		//mensagem_audio_frase.SetActive (false);
 		//board_letter.SetActive(false);
 		board_letter.GetComponent<Button> ().enabled = false;
 
@@ -729,7 +682,6 @@ public class gameController2 : MonoBehaviour
 		else {
 			if (Time.timeScale == 0f) {
 				Time.timeScale = 1f;
-				bird1.GetComponent<AudioSource> ().Play ();
 				if (dadosJogo.Instance.currentPesonagem == 1)
 					cowgirl_moving_rope.SetActive (true);
 				else
@@ -740,7 +692,6 @@ public class gameController2 : MonoBehaviour
 				board2_letter.SetActive (true);
 			} else {
 				Time.timeScale = 0f;
-				bird1.GetComponent<AudioSource> ().Pause ();
 				horse.GetComponent<AudioSource> ().Pause ();
 				horse2.GetComponent<AudioSource> ().Pause ();
 				cowboy_moving_rope.SetActive (false);
@@ -761,7 +712,6 @@ public class gameController2 : MonoBehaviour
 			menu_pause.SetActive (false);
 		else {
 			Time.timeScale = 1f;
-			bird1.GetComponent<AudioSource> ().Play ();
 
 			if (dadosJogo.Instance.currentPesonagem == 1)
 				cowgirl_moving_rope.SetActive (true);
@@ -783,39 +733,5 @@ public class gameController2 : MonoBehaviour
 		dadosJogo.Instance.salvar_dados ();
 		SceneManager.LoadScene ("TelaInicialOpcoes");
 	}
-
-
-	public void btnSoundClick ()
-	{
-		// Função que bloqueia e ativa o som!
-		var audio = bird1.GetComponent<AudioSource> ();
-		if (audio.isPlaying) {
-			sound_on.SetActive (false);
-			audio.Pause ();
-			horse.GetComponent<AudioSource> ().Stop ();
-			horse2.GetComponent<AudioSource> ().Stop ();
-			sound_off.SetActive (true);
-			sound_won.SetActive (false);
-			sound_lost.SetActive (false);
-
-
-		} else {
-			sound_on.SetActive (true);
-			audio.UnPause ();
-			horse.GetComponent<AudioSource> ().Play ();
-			horse2.GetComponent<AudioSource> ().Play ();
-
-			if (xHorse > 9.52f)
-				horse.GetComponent<AudioSource> ().Pause ();
-			if (xHorse2 > 9.52f)
-				horse2.GetComponent<AudioSource> ().Pause ();
-			sound_off.SetActive (false);
-			sound_won.SetActive (true);
-			sound_lost.SetActive (true);
-
-		}
-	}
-
-
 
 }
