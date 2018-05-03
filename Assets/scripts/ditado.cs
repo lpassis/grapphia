@@ -51,7 +51,7 @@ public class ditado : MonoBehaviour
 
 	//Função criada por Magno 
 	public void PegaTexto (){		
-		string palavraAnalisada = bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].palavra_completa;
+		string palavraAnalisada = bancoPalavras.Instance.palavras[idPalavra].palavra_completa;
 		string texto = textoDigitado.text;
 		string upperString = texto.ToUpper();
 
@@ -89,7 +89,7 @@ public class ditado : MonoBehaviour
 
 		animacaoProfessora.SetActive (true);
 		StartCoroutine ("audioEnd");
-		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].nome_audio_ditado;
+		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras[idPalavra].nome_audio_ditado;
 
 		AudioClip clip = (AudioClip)Resources.Load (arquivo);
 		AudioSource audio;
@@ -100,7 +100,7 @@ public class ditado : MonoBehaviour
 	}	
 
 	IEnumerator audioEnd(){
-		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras [dadosJogo.Instance.currentUser.Nivel] [idPalavra].nome_audio_ditado;
+		string arquivo = "audiosditado/" + bancoPalavras.Instance.palavras[idPalavra].nome_audio_ditado;
 
 		AudioClip clip = (AudioClip)Resources.Load (arquivo);
 		yield return new WaitForSeconds (clip.length);

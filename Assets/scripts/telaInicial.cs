@@ -45,13 +45,13 @@ public class telaInicial : MonoBehaviour {
 
 		var words2 = _connection.Table<palavraOpcao>();
 		bancoPalavras.Instance._connection = _connection;
-		bancoPalavras.Instance.total_palavras = words2.Count();
+		bancoPalavras.Instance.total_palavras_geral = words2.Count();
 
-		Debug.Log ("Total de palavras no BD: " + bancoPalavras.Instance.total_palavras);
+		Debug.Log ("Total de palavras no BD: " + bancoPalavras.Instance.total_palavras_geral);
 
 
 		//Se não tiver nenhuma palavra no banco você chama a função e preenche as palavras
-		if(bancoPalavras.Instance.total_palavras < 1 ){
+		if(bancoPalavras.Instance.total_palavras_geral < 1 ){
       	  bancoPalavras.Instance.salvar_palavras_no_banco();
 		}
     }

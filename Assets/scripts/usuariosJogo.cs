@@ -276,7 +276,7 @@ public class usuariosJogo : MonoBehaviour {
 				}
 
 				reference.Child("users").Child(dadosJogo.Instance.currentUser.key + "/" + dadosJogo.Instance.currentUser.Name + "/FireBase UID").SetValueAsync(newUser.UserId);
-				SceneManager.LoadScene ("TelaEstante");
+				SceneManager.LoadScene ("telaEstante");
 
 			});
 

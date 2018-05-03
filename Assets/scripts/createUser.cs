@@ -51,7 +51,7 @@ public class createUser : MonoBehaviour {
 
 		InitializeFirebase ();
 
-		if(bancoPalavras.Instance.total_palavras < 1 ){
+		if(bancoPalavras.Instance.total_palavras_geral < 1 ){
 
 			string key = reference.Child("users").Push().Key;
 
