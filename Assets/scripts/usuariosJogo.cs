@@ -62,9 +62,8 @@ public class DataService       // Classe de serviço do banco de dados!
     {
 		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://grapphia.firebaseio.com/");
 		DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
-
-		Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-		Firebase.Auth.FirebaseUser user_fb = auth.CurrentUser;
+		//Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+		//Firebase.Auth.FirebaseUser user_fb = auth.CurrentUser;
 
         var p = new user
         {
@@ -74,11 +73,10 @@ public class DataService       // Classe de serviço do banco de dados!
 			scoreDitado = scoreDitado,
 			key = keyFireBase,
         };
-		string uid = user_fb.UserId; //UID gerado pelo FireBase.Auth
+		//string uid = user_fb.UserId; //UID gerado pelo FireBase.Auth
 		//string path = keyFireBase + "/" + uid + "/" + p.Name;
 
 		string path = keyFireBase + "/" + p.Name;
-		//writeNewUser (p.Name,p.Score,p.Nivel,p.scoreDitado,p.key, path);
 
 		//reference.Child("users").Child(path + "/Nome").SetValueAsync(p.Name).IsCompleted += g();
 
@@ -86,7 +84,6 @@ public class DataService       // Classe de serviço do banco de dados!
 		reference.Child("users").Child(path + "/Score").SetValueAsync(p.Score);
 		reference.Child("users").Child(path + "/Nivel").SetValueAsync(p.Nivel);
 		reference.Child("users").Child(path + "/Score Ditado").SetValueAsync(p.scoreDitado);
-		reference.Child("users").Child(path + "/FireBase UID").SetValueAsync(uid);
 		reference.Child("users").Child(path + "/Date & Time").SetValueAsync(System.DateTime.UtcNow.ToString("HH:mm dd MMMM, yyyy"));
         
 		_connection.Insert(p);
@@ -223,8 +220,7 @@ public class usuariosJogo : MonoBehaviour {
         {
 
             data.removeUser(user.Id);
-			reference.Child ("users/" + key).Child ("/"+user.Name).RemoveValueAsync();
-
+			//reference.Child ("users/" + key).Child ("/" + user.Name).RemoveValueAsync ();
         }
             Users.options.RemoveAt(Users.value);
 
@@ -239,47 +235,28 @@ public class usuariosJogo : MonoBehaviour {
 		//DataService data = new DataService();
 		//data.EstabeleceConexao ("grapphia");
 
-		if (Users.captionText.text == "") return;
-		else
-		{
-			auth.SignInAnonymouslyAsync().ContinueWith(task => {
-				if (task.IsCanceled) {
-					Debug.LogError("SignInAnonymouslyAsync was canceled.");
-					return;
-				}
-				if (task.IsFaulted) {
-					Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
-					return;
-				}
+		if (Users.captionText.text == "")
+			return;
+		else {
+			var users = _connection.Table<user>().Where(x => x.Name == Users.captionText.text);
 
-				Firebase.Auth.FirebaseUser newUser = task.Result;
-				Debug.LogFormat("User signed in successfully: {0} ({1})",
-					newUser.DisplayName, newUser.UserId);
 
-				var users = _connection.Table<user>().Where(x => x.Name == Users.captionText.text);
+			foreach(var user in users)
+			{
 
-				reference.Child("admin/" + newUser.UserId + "/Date & Time").SetValueAsync(System.DateTime.UtcNow.ToString("HH:mm dd MMMM, yyyy"));
-
-				foreach(var user in users)
+				dadosJogo.Instance.currentUser = new user
 				{
+					Id = user.Id,
+					Name = user.Name,
+					Score = user.Score,
+					Nivel = user.Nivel,
+					scoreDitado = user.scoreDitado,
+					key = user.key,
+				};
 
-					dadosJogo.Instance.currentUser = new user
-					{
-						Id = user.Id,
-						Name = user.Name,
-						Score = user.Score,
-						Nivel = user.Nivel,
-						scoreDitado = user.scoreDitado,
-						key = user.key,
-					};
+			}
 
-				}
-
-				reference.Child("users").Child(dadosJogo.Instance.currentUser.key + "/" + dadosJogo.Instance.currentUser.Name + "/FireBase UID").SetValueAsync(newUser.UserId);
-				SceneManager.LoadScene ("telaEstante");
-
-			});
-
+			SceneManager.LoadScene ("telaEstante");
 		}
 
 

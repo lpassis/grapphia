@@ -6,6 +6,7 @@ using System.Collections;
 using Firebase;
 using Firebase.Unity.Editor;
 using Firebase.Auth;
+using Firebase.Database;
 
 //Classe da tela inicial!
 public class telaInicial : MonoBehaviour {
@@ -18,7 +19,7 @@ public class telaInicial : MonoBehaviour {
 		// Conexão com o banco de dados grapphia!
 		var filepath = string.Format("{0}/{1}", Application.persistentDataPath, "grapphia");
 		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://grapphia.firebaseio.com/");
-
+		DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
 		if (!File.Exists(filepath))
 		{
 
@@ -42,6 +43,8 @@ public class telaInicial : MonoBehaviour {
 		_connection.CreateTable<user>();
 		_connection.CreateTable<palavraOpcao>();
 		_connection.CreateTable<palavraAcertoUser>();
+		//Tabela keyPhone criada para gerar uma chave aleatoria no FireBase
+		_connection.CreateTable<keyPhone>();
 
 		var words2 = _connection.Table<palavraOpcao>();
 		bancoPalavras.Instance._connection = _connection;
@@ -52,7 +55,14 @@ public class telaInicial : MonoBehaviour {
 
 		//Se não tiver nenhuma palavra no banco você chama a função e preenche as palavras
 		if(bancoPalavras.Instance.total_palavras_geral < 1 ){
-      	  bancoPalavras.Instance.salvar_palavras_no_banco();
+			bancoPalavras.Instance.salvar_palavras_no_banco();
+			string pushKey = reference.Child("users").Push().Key;
+
+			var k = new keyPhone{
+				keyFireBase = pushKey,
+			};
+
+			_connection.Insert(k);
 		}
     }
 
