@@ -116,12 +116,23 @@ public class bancoPalavras
 		Debug.Log("Foram recuperadas " + resul.Count() + " palavras do BD referentes ao nível " + level);	
 
 		acertos = resul2.Count();
+		//Setar o vetor para na recuperar lixo em gamecontroller.cs
+		palavrasAcerto = new palavraAcertoUser[(32*aux)];
+		for (int i = 0; i < palavrasAcerto.Length; i++) {
+			palavrasAcerto [i] = new palavraAcertoUser(){
+				Id = -1,
+				idPalavra = -1,
+				idUser = -1,
+				acerto = false,
+				nivelPalavra = -1
+			};
+		}
 
 		if (resul2.Count() > 0)
 		{
-			palavrasAcerto = new palavraAcertoUser[totalPalavras];
+			//palavrasAcerto = new palavraAcertoUser[totalPalavras];
 
-			for (int j = 0; j < totalPalavras; ++j) palavrasAcerto[j] = new palavraAcertoUser();
+			//for (int j = 0; j < totalPalavras; ++j) palavrasAcerto[j] = new palavraAcertoUser();
 
 			foreach (var p in resul2)
 			{
@@ -137,14 +148,14 @@ public class bancoPalavras
 				ListaIdPalavraAcerto.Add(p.idPalavra-1);
 			}
 		} 
-		else
+		/*else
 		{
 			palavrasAcerto = new palavraAcertoUser[totalPalavras];
 			for (int j = 0; j < totalPalavras; ++j)
 			{
 				palavrasAcerto[j] = new palavraAcertoUser();
 			}
-		}
+		}*/
 
     }
 
@@ -153,14 +164,14 @@ public class bancoPalavras
 		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://grapphia.firebaseio.com/");
 		DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
 
-		Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-		Firebase.Auth.FirebaseUser user_fb = auth.CurrentUser;
+		//Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+		//Firebase.Auth.FirebaseUser user_fb = auth.CurrentUser;
 
 		var key = bancoPalavras.Instance._connection.Table<keyPhone> ().FirstOrDefault().keyFireBase;
 
 		//var nomeCurrentUser = _connection.Table<user>().Where(x => x.Id == dadosJogo.Instance.currentUser.Id);
 
-		string uid = user_fb.UserId;
+		//string uid = user_fb.UserId;
 		//string pathFireBase = "palavrasAcertoUser/" + key + "/" + uid + "/" + dadosJogo.Instance.currentUser.Name + "/";
 		string auxPalavra = "";
 		string pathFireBase = "palavrasAcertoUser/" + key + "/" + dadosJogo.Instance.currentUser.Name + "/";
@@ -177,7 +188,7 @@ public class bancoPalavras
 				reference.Child (pathFireBase + auxPalavra + "/acerto").SetValueAsync (palavrasAcerto [i].acerto);
 				reference.Child (pathFireBase + auxPalavra + "/nivelpalavra").SetValueAsync (palavrasAcerto [i].nivelPalavra);
 				reference.Child (pathFireBase + auxPalavra + "/Nome").SetValueAsync (dadosJogo.Instance.currentUser.Name);
-				reference.Child (pathFireBase + auxPalavra + "/FireBase UID").SetValueAsync (uid);
+
 
 
 			} else if (palavrasAcerto [i].idPalavra > 0) {
@@ -188,7 +199,7 @@ public class bancoPalavras
 				reference.Child(pathFireBase + auxPalavra + "/acerto").SetValueAsync(palavrasAcerto[i].acerto);
 				reference.Child(pathFireBase + auxPalavra + "/nivelpalavra").SetValueAsync(palavrasAcerto[i].nivelPalavra);
 				reference.Child(pathFireBase + auxPalavra + "/Nome").SetValueAsync(dadosJogo.Instance.currentUser.Name);
-				reference.Child(pathFireBase + auxPalavra+ "/FireBase UID").SetValueAsync(uid);
+
 
 			}
 			auxPalavra = "";
@@ -203,6 +214,7 @@ public class bancoPalavras
 		total_palavras_geral = 64;
 		palavraOpcao[] palavrasBanco;
 		palavrasBanco = new palavraOpcao[total_palavras_geral];
+
 		DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
 
 		for (int i = 0; i < total_palavras_geral; ++i)
@@ -881,8 +893,7 @@ public class comandosBasicos : MonoBehaviour {
 			SceneManager.LoadScene ("telaLivroMundo3");
 		}
 	}
-	
-	//para que serve essa função? nenhuma está comentada
+
 	public string getKey(){
 		var key = bancoPalavras.Instance._connection.Table<keyPhone> ().FirstOrDefault().keyFireBase;
 		return key;

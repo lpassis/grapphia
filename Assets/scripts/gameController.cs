@@ -151,9 +151,9 @@ public class gameController : MonoBehaviour
 	float aux;
 
 	DatabaseReference reference;
-	Firebase.Auth.FirebaseAuth auth;
-	Firebase.Auth.FirebaseUser user_fb;
-	string uid;
+	//Firebase.Auth.FirebaseAuth auth;
+	//Firebase.Auth.FirebaseUser user_fb;
+	//string uid;
 
 	string pathToFireBaseUser;
 
@@ -515,8 +515,8 @@ public class gameController : MonoBehaviour
 	void InitializeFireBase(){
 		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl ("https://grapphia.firebaseio.com/");
 		reference= FirebaseDatabase.DefaultInstance.RootReference;
-		auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-		user_fb = auth.CurrentUser;
+		//auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+		//user_fb = auth.CurrentUser;
 		//uid = user_fb.UserId;
 	}
 	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -552,8 +552,14 @@ public class gameController : MonoBehaviour
 				cowgirl_moving_rope.SetActive (false);
 				cowgirl_lacando1.SetActive (true);
 			}
+			Debug.Log ("acertou");
 
-			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != true) {   //verificando se palavra já foi respondida corretamente!
+			++dadosJogo.Instance.currentUser.Score;
+			//++bancoPalavras.Instance.acertos;
+			calcula_porcentagem_casa ();
+			reference.Child ("users/" + pathToFireBaseUser + "/Score").SetValueAsync (dadosJogo.Instance.currentUser.Score);
+
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id == -1) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
 					idPalavra = bancoPalavras.Instance.palavras[idPalavra].Id,
@@ -563,15 +569,11 @@ public class gameController : MonoBehaviour
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
-				++dadosJogo.Instance.currentUser.Score;
-				++bancoPalavras.Instance.acertos;
-				calcula_porcentagem_casa ();
-			}
 
-			message_hit.SetActive (true);
-			sound_won.GetComponent<AudioSource> ().Play ();
-			txtBoardWord.text = bancoPalavras.Instance.palavras[idPalavra].palavra_completa;
-			Score.text = "ACERTOS: " + dadosJogo.Instance.currentUser.Score; 
+			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == false) {
+				bancoPalavras.Instance.palavrasAcerto[auxIdpalavra].acerto= true;
+				//nao está incremetando o currentUser.Score
+			} 
 		} else if (yboard_letter >= -1.7f) {
 
 			respondido = true;
@@ -584,9 +586,12 @@ public class gameController : MonoBehaviour
 				cowgirl_moving_rope.SetActive (false);
 				cowgirl_lacando1.SetActive (true);
 			}
+			Debug.Log ("ERROU.... hahaha");
+			Debug.Log ("auxidpalavra" + auxIdpalavra);
 
+			Debug.Log ("LU:" +bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id);
 
-			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != false) {
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id == -1) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
 					idPalavra = bancoPalavras.Instance.palavras[idPalavra].Id,
@@ -596,6 +601,9 @@ public class gameController : MonoBehaviour
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
+				reference.Child("users/" + pathToFireBaseUser + "/Erros").SetValueAsync(bancoPalavras.Instance.qtd_WordsPresented - dadosJogo.Instance.currentUser.Score);
+			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == true) {
+				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto = false;
 			}
 
 			sound_lost.GetComponent<AudioSource> ().Play ();
@@ -635,20 +643,25 @@ public class gameController : MonoBehaviour
 				cowgirl_lacando2.SetActive (true);
 			}
 
-			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != true) {
+			++dadosJogo.Instance.currentUser.Score;
+			//++bancoPalavras.Instance.acertos;
+			calcula_porcentagem_casa ();
+			reference.Child ("users/" + pathToFireBaseUser + "/Score").SetValueAsync (dadosJogo.Instance.currentUser.Score);
+
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id == -1) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
-					idPalavra = bancoPalavras.Instance.palavras[idPalavra].Id,
+					idPalavra = bancoPalavras.Instance.palavras [idPalavra].Id,
 					idUser = dadosJogo.Instance.currentUser.Id,
 					acerto = true,
 					nivelPalavra = (dadosJogo.Instance.currentUser.Nivel + 1)
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
-				++dadosJogo.Instance.currentUser.Score;
-				++bancoPalavras.Instance.acertos;
-				calcula_porcentagem_casa ();
-				Debug.Log ("Acertos: " + bancoPalavras.Instance.acertos);
+
+			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == false) {
+				bancoPalavras.Instance.palavrasAcerto[auxIdpalavra].acerto= true;
+				//nao está incremetando o currentUser.Score
 			}
 
 
@@ -670,7 +683,10 @@ public class gameController : MonoBehaviour
 				cowgirl_lacando2.SetActive (true);
 			}
 
-			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto != false) {
+			Debug.Log ("ERROU....");
+
+
+			if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].Id == -1) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra] = new palavraAcertoUser {
 
 					idPalavra = bancoPalavras.Instance.palavras[idPalavra].Id,
@@ -680,6 +696,10 @@ public class gameController : MonoBehaviour
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
+				reference.Child("users/" + pathToFireBaseUser + "/Erros").SetValueAsync(bancoPalavras.Instance.qtd_WordsPresented - dadosJogo.Instance.currentUser.Score);
+
+			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == true) {
+				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto = false;
 			}
 
 			sound_lost.GetComponent<AudioSource> ().Play ();
