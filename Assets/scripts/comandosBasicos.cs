@@ -893,8 +893,7 @@ public class comandosBasicos : MonoBehaviour {
 			SceneManager.LoadScene ("telaLivroMundo3");
 		}
 	}
-	
-	//para que serve essa função? nenhuma está comentada
+
 	public string getKey(){
 		var key = bancoPalavras.Instance._connection.Table<keyPhone> ().FirstOrDefault().keyFireBase;
 		return key;
