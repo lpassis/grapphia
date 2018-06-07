@@ -146,6 +146,7 @@ public class gameController : MonoBehaviour
 
 	int ScoreInitial;
 	// Armazena o acerto inicial em cada nível!
+	int ErrosInitial;
 
 	bool fimJogo;
 	float aux;
@@ -164,7 +165,7 @@ public class gameController : MonoBehaviour
 	{
 
 		ScoreInitial = dadosJogo.Instance.currentUser.Score; // Recebendo do banco de dados o score do usuário corrente!
-
+		ErrosInitial = dadosJogo.Instance.currentUser.Erros; // Recebendo do banco de dados os erros do usuário corrente!
 		if (ScoreInitial == 0) {
 
 			mensagem_inicial.SetActive (true);
@@ -601,7 +602,8 @@ public class gameController : MonoBehaviour
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
-				reference.Child("users/" + pathToFireBaseUser + "/Erros").SetValueAsync(bancoPalavras.Instance.qtd_WordsPresented - dadosJogo.Instance.currentUser.Score);
+				dadosJogo.Instance.currentUser.Erros = bancoPalavras.Instance.qtd_WordsPresented - dadosJogo.Instance.currentUser.Score;
+				reference.Child("users/" + pathToFireBaseUser + "/Erros").SetValueAsync(dadosJogo.Instance.currentUser.Erros);
 			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == true) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto = false;
 			}
@@ -696,7 +698,8 @@ public class gameController : MonoBehaviour
 				};
 				bancoPalavras.Instance.qtd_WordsPresented++;
 				bancoPalavras.Instance.ListaIdPalavraAcerto.Add (idPalavra);
-				reference.Child("users/" + pathToFireBaseUser + "/Erros").SetValueAsync(bancoPalavras.Instance.qtd_WordsPresented - dadosJogo.Instance.currentUser.Score);
+				dadosJogo.Instance.currentUser.Erros = bancoPalavras.Instance.qtd_WordsPresented - dadosJogo.Instance.currentUser.Score;
+				reference.Child("users/" + pathToFireBaseUser + "/Erros").SetValueAsync(dadosJogo.Instance.currentUser.Erros);
 
 			} else if (bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto == true) {
 				bancoPalavras.Instance.palavrasAcerto [auxIdpalavra].acerto = false;

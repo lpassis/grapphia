@@ -184,6 +184,8 @@ public class bancoPalavras
 				_connection.Update (palavrasAcerto [i]);
 
 				auxPalavra = bancoPalavras.Instance.palavras[palavrasAcerto[i].idPalavra - 1].palavra_completa;
+				reference.Child (pathFireBase + "/Acertos").SetValueAsync (dadosJogo.Instance.currentUser.Score);
+				reference.Child (pathFireBase + "/Erros").SetValueAsync (dadosJogo.Instance.currentUser.Erros);
 				reference.Child (pathFireBase + auxPalavra + "/idPalavra").SetValueAsync (palavrasAcerto [i].idPalavra);
 				reference.Child (pathFireBase + auxPalavra + "/acerto").SetValueAsync (palavrasAcerto [i].acerto);
 				reference.Child (pathFireBase + auxPalavra + "/nivelpalavra").SetValueAsync (palavrasAcerto [i].nivelPalavra);
@@ -195,6 +197,8 @@ public class bancoPalavras
 				_connection.Insert (palavrasAcerto [i]);
 
 				auxPalavra = bancoPalavras.Instance.palavras[palavrasAcerto [i].idPalavra - 1].palavra_completa;
+				reference.Child (pathFireBase + "/Acertos").SetValueAsync (dadosJogo.Instance.currentUser.Score);
+				reference.Child (pathFireBase + "/Erros").SetValueAsync (dadosJogo.Instance.currentUser.Erros);
 				reference.Child(pathFireBase + auxPalavra + "/idPalavra").SetValueAsync(palavrasAcerto[i].idPalavra);
 				reference.Child(pathFireBase + auxPalavra + "/acerto").SetValueAsync(palavrasAcerto[i].acerto);
 				reference.Child(pathFireBase + auxPalavra + "/nivelpalavra").SetValueAsync(palavrasAcerto[i].nivelPalavra);

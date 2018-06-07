@@ -58,7 +58,7 @@ public class DataService       // Classe de serviço do banco de dados!
 
 	//Tabela alterada por Magno
     // Inserindo usuário no banco de dados!
-	public user CreateUser(string newUser, int score, int nivel, int scoreDitado, string keyFireBase)
+	public user CreateUser(string newUser, int score, int erros,int nivel, int scoreDitado, string keyFireBase)
     {
 		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://grapphia.firebaseio.com/");
 		DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
@@ -69,6 +69,7 @@ public class DataService       // Classe de serviço do banco de dados!
         {
             Name = newUser,
             Score = score,
+			Erros = erros,
             Nivel = nivel,
 			scoreDitado = scoreDitado,
 			key = keyFireBase,
@@ -119,6 +120,8 @@ public class user
     public string Name { get; set; }
 
     public int Score { get; set; }
+
+	public int Erros { get; set; }
 
     public int Nivel { get; set; }
 
@@ -220,7 +223,7 @@ public class usuariosJogo : MonoBehaviour {
         {
 
             data.removeUser(user.Id);
-			//reference.Child ("users/" + key).Child ("/" + user.Name).RemoveValueAsync ();
+			reference.Child ("users/" + key).Child ("/" + user.Name).RemoveValueAsync ();
         }
             Users.options.RemoveAt(Users.value);
 
@@ -249,6 +252,7 @@ public class usuariosJogo : MonoBehaviour {
 					Id = user.Id,
 					Name = user.Name,
 					Score = user.Score,
+					Erros = user.Erros,
 					Nivel = user.Nivel,
 					scoreDitado = user.scoreDitado,
 					key = user.key,

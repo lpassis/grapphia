@@ -92,7 +92,7 @@ public class createUser : MonoBehaviour {
 		reference.Child("admin/" + getKey() + "/Date & Time").SetValueAsync(System.DateTime.UtcNow.ToString("HH:mm dd MMMM, yyyy"));
 		reference.Child("admin/" + getKey() + "/isWriteable").SetValueAsync(true);
 
-		data.CreateUser(nome.text, 0,0,0, getKey());
+		data.CreateUser(nome.text, 0,0,0,0, getKey());
 
 		users = null;
 
@@ -106,6 +106,7 @@ public class createUser : MonoBehaviour {
 				Id = user.Id,
 				Name = user.Name,
 				Score = user.Score,
+				Erros = user.Erros,
 				Nivel = user.Nivel,
 				scoreDitado = user.scoreDitado,
 				key = getKey(),
